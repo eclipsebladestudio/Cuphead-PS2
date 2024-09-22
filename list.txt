@@ -1,0 +1,51 @@
+Progresso Geral:
+START: 80% concluído
+OPTIONS: 50% concluído
+CREDITS: 95% concluído
+EXIT: 100% concluído
+
+---
+
+START - O que falta:
+Implementar a função de voltar para o menu anterior ao pressionar o botão Triângulo (nos menus de START, OPTIONS, CREDITS e EXIT).
+Tornar a animação das cabeças mais lenta.
+Criar o sistema de save que exibe a porcentagem de progresso do jogo.
+
+---
+
+OPTIONS - O que falta:
+AUDIO (Sistema de aumento/diminuição de áudio):
+Visual: 100% completo
+Adicionar a função para ajustar o volume real, pois atualmente as opções são apenas visuais.
+Corrigir o bug que mantém o jogo a 20 FPS.
+
+VISUAL (Interface visual):
+Visual: 100% completo
+VSYNC: 100% completo
+
+Adicionar a função de ajuste de Aspect Ratio (proporção da tela).
+Adicionar o sistema de ajuste de brilho da tela.
+Implementar a função para trocar a resolução da tela (atualmente está dando crash e precisa de adaptações no código).
+Adicionar a função de voltar para o menu anterior ao pressionar o botão BACK (essa funcionalidade não foi implementada ainda).
+
+CONTROLS (Configurações de controles):
+Interface: 100% completa
+Opções:
+Done: 100%
+Restore Defaults: 0%
+Rumble: 100%
+
+Implementar a função para substituir os botões (no momento, só é possível marcar as duas últimas opções).
+Adicionar o sistema de substituição de botões quando o jogador selecionar PLAYER TWO.
+
+---
+
+LANGUAGE - O que está pronto:
+Sistema de linguagem: 100% completo (não é necessário fazer mais alterações).
+
+---
+
+CREDITS - O que falta:
+Corrigir o problema de lag a 20 FPS (provavelmente relacionado com a fonte utilizada).
+Adicionar o nome do Axel nos créditos.
+Fazer com que, ao final dos créditos, o jogo retorne ao MENU.
