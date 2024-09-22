@@ -1,12 +1,11 @@
-console.log("Languageforscripts Loaded!!!");
 function loadLanguage() {
-    const jsonFile = "host:/Assets/Configuration Files/current_language.json";
+    const jsonFile = `host:/Configuration Files/current_language.json`;
     try {
         const fileContent = std.open(jsonFile, "r").readAsString().trim();
         const json = JSON.parse(fileContent);
         const language = json.currentLanguage || "en"; 
 
-        const langFile = `host:/Configuration Files/Languages/${language}.cfg`;
+        const langFile = `Configuration Files/Languages/${language}.cfg`;
         const langContent = std.open(langFile, "r").readAsString();
         texts = parseLanguageFile(langContent); 
 
