@@ -106,7 +106,7 @@ function startAnimation() {
         const currentTime = Date.now();
 
         const PAD = Pads.get(0);
-        if (PAD.btns & Pads.CROSS) {
+        if (PAD.btns) {
             if (!transitionActive) {
                 transitionActive = true;
                 transitionIndex = 0;
