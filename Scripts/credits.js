@@ -41,6 +41,7 @@ var introDuration = 6000;
 var logoDuration = 3000;
 
 console.log("Teste 6");
+let texts = {};
 const introText = [
     texts["intro_text1"] || "Before starting, none of this would be possible in this capacity",
     texts["intro_text2"] || "without the help of Daniel Santos, creator of the AthenaENV engine,",

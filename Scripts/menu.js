@@ -1,4 +1,3 @@
-console.log("Menu Script Loaded!!!");
 const canvas = Screen.getMode();
 canvas.width = 640;
 canvas.height = 448;
@@ -9,21 +8,28 @@ let pad = Pads.get();
 let stop = false;
 
 let showSelectText = false;
-console.log("Loading A Ton of Things!!!");
-std.loadScript("host:/Scripts/SubScripts/Audio.js");
-std.loadScript("host:/Scripts/SubScripts/AudioMenu.js");
-std.loadScript("host:/Scripts/SubScripts/deleteImages.js");
-std.loadScript("host:/Scripts/SubScripts/Language.js");
-std.loadScript("host:/Scripts/SubScripts/languagemenu.js");
-std.loadScript("host:/Scripts/SubScripts/menuandsubmenu.js");
-std.loadScript("host:/Scripts/SubScripts/config.js");
-std.loadScript("host:/Scripts/SubScripts/beforegameplay.js");
-std.loadScript("host:/Scripts/SubScripts/imagesandconfigurations.js");
-std.loadScript("host:/Scripts/SubScripts/controlsmenu.js");
-std.loadScript("host:/Scripts/SubScripts/visualmenu.js");
-console.log("A Ton of Things Loaded!!!");
 
-const intervalId22 = os.setInterval(() => {
+const loadScript = (scriptName) => {
+  const baseDir = "host:/Scripts/SubScripts/";
+  std.loadScript(`${baseDir}${scriptName}.js`);
+};
+
+const scripts = [
+  "Audio",
+  "AudioMenu",
+  "deleteImages",
+  "Language",
+  "languagemenu",
+  "menuandsubmenu",
+  "beforegameplay",
+  "imagesandconfigurations",
+  "controlsmenu",
+  "visualmenu"
+];
+
+scripts.forEach(script => loadScript(script));
+
+Screen.display(() => {
   pad.update();
 
   if (!isInSubmenu && !isInLanguageMenu && !isInInterfaceP && !isInAudioMenu && !isInControlsMenu && !isInVisualMenu ) {
@@ -196,7 +202,9 @@ const intervalId22 = os.setInterval(() => {
         if (transitionbIndex >= transitionbImages.length) {
           transitionbIndex = transitionbImages.length - 1;
           transitionbCompleted = true;
-          showBlackScreen2 = true;
+
+          Sound.pause(audio);
+          std.reload("host:/Scripts/credits.js");
         }
         lastTransitionbUpdateTime = currentTime;
       }
@@ -207,17 +215,6 @@ const intervalId22 = os.setInterval(() => {
     transitionbImage.height = canvas.height;
     transitionbImage.draw(0, 0);
 
-    if (showBlackScreen2) {
-      stop = true;
-      deleteImages();
-      Screen.clear();
-      Sound.pause(audio);
-os.clearInterval(intervalId22);
-      std.loadScript("host:/Scripts/credits.js");
-      
-      return;
     }
-  }
 
-  Screen.flip()
-}, 0);
+});
