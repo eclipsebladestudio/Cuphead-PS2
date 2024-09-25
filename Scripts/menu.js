@@ -15,6 +15,7 @@ const loadScript = (scriptName) => {
 };
 
 const scripts = [
+  "config",
   "Audio",
   "AudioMenu",
   "deleteImages",

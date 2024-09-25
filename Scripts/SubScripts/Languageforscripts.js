@@ -25,3 +25,5 @@ function loadLanguage() {
         console.log(`Erro ao carregar a linguagem do JSON ou arquivo de configuração: ${e.message}`);
     }
 }
+
+loadLanguage(); 
