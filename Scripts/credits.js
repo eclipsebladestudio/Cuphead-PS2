@@ -1,26 +1,17 @@
-console.log("Credits Loaded!!!!");
-console.log("Teste 1");
 const canvas2 = Screen.getMode();
 canvas2.width = 640;
 canvas2.height = 448;
 Screen.setMode(canvas2);
-console.log("Teste 2");
 var gray = Color.new(11, 11, 11, 255)
 
 var logoebd = new Image("host:/Assets/Textures/LOGOt.png");
-console.log("Teste 3");
 
 var fant = new Font("host:/Assets/Font/bold.ttf");
-console.log("Teste 3.1");
 fant.scale = 1;
-console.log("Teste 3.2");
 var fx3 = [];
-console.log("Teste 3.3");
 for (let i = 1; i <= 10; i++) {
     fx3.push(new Image(`host:/Assets/Textures/FX/${i}.png`));
-    console.log("Teste 3.4."+i);
 }
-console.log("Teste 4");
 let fx3Index = 0;
 let fx3Direction = 1;
 let lastFx3UpdateTime = Date.now();
@@ -36,11 +27,9 @@ let introStartTime = Date.now();
 let creditsOffset = canvas2.height;
 let logoStartTime = null;
 let showingLogo = false;
-console.log("Teste 5");
 var introDuration = 6000;
 var logoDuration = 3000;
 
-console.log("Teste 6");
 let texts = {};
 const introText = [
     texts["intro_text1"] || "Before starting, none of this would be possible in this capacity",
@@ -48,7 +37,7 @@ const introText = [
     texts["intro_text3"] || "among other projects. I thank Daniel in advance for everything he",
     texts["intro_text4"] || "has done to help us. Thank you very much, Mr. Daniel."
 ];
-console.log("Teste 7");
+
 const textLines = [
     { text: texts["owners_title"] || "Owners", color: Color.new(255, 0, 0) },
     { text: texts["owners_name"] || "NGM MODS", color: Color.new(255, 255, 255) },
@@ -74,7 +63,6 @@ const textLines = [
     { text: texts["honorable_mentions_title"] || "Honorable Mentions", color: Color.new(255, 0, 0) },
     { text: texts["honorable_mentions_text"] || "Zeca Apelão and Kianzitou - For sprites and sounds help", color: Color.new(255, 255, 255) }
 ];
-console.log("Teste 8");
 function drawText(lines, yOffset, fontSize) {
     const centerX = canvas2.width / 2;
     let y = yOffset;
@@ -93,8 +81,9 @@ function drawText(lines, yOffset, fontSize) {
         y += lineSpacing;
     }
 }
-console.log("Teste 9");
-os.setInterval(() => {
+
+Screen.display(() => {
+    
     const currentTime = Date.now();
 
     if (currentTime - lastFx3UpdateTime >= fx3AnimationSpeed) {
@@ -108,7 +97,7 @@ os.setInterval(() => {
         lastFx3UpdateTime = currentTime;
     }
 
-    Screen.clear(gray);
+    
     
     fx3[fx3Index].draw(0, 0);
 
@@ -142,6 +131,4 @@ os.setInterval(() => {
     }
     fx3[fx3Index].draw(0, 0);
 
-    Screen.flip();
-}, 0);
-console.log("Done!!!");
+});

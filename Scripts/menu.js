@@ -205,7 +205,7 @@ Screen.display(() => {
           transitionbCompleted = true;
 
           Sound.pause(audio);
-          std.reload("host:/Scripts/credits.js");
+          std.loadScript("host:/Scripts/credits.js");
         }
         lastTransitionbUpdateTime = currentTime;
       }
