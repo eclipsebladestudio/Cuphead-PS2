@@ -3,10 +3,11 @@ console.log("Teste 1");
 var bold2 = new Font("Assets/Font/bold.ttf");
 var bold3 = new Font("Assets/Font/bold.ttf");
 var text_new = new Font("Assets/Font/bold.ttf");
-var text_player = new Font("Assets/Font/bold.ttf");// it's breaking the code for what seems no reason ~DevECoisas
+var text_player = new Font("default");
 text_player.scale = 0.6;
 text_new.color = Color.new(29,29,29);
 text_new.scale = 0.8;
+
 console.log("Teste 2");
 var isInInterfaceP = false;
 var inter = new Image("Assets/Textures/interface.png");
@@ -51,6 +52,32 @@ function loadFrameHead2(frame, width, height, x, y) {
   }
 }
 
+function checkSaveFiles() {
+  var saveFiles = [
+      "Assets/Saves/cuphead_player_data_v1_slot_0.sav",
+      "Assets/Saves/cuphead_player_data_v1_slot_1.sav",
+      "Assets/Saves/cuphead_player_data_v1_slot_2.sav",
+  ];
+
+  var foundSave = [false, false, false]; 
+
+  for (let i = 0; i < saveFiles.length; i++) {
+      if (std.exists(saveFiles[i])) {
+          console.log("O arquivo " + saveFiles[i] + " existe.");
+          foundSave[i] = true;
+         
+      } else {
+          console.log("O arquivo " + saveFiles[i] + " não existe.");
+      }
+  }
+
+  return foundSave; 
+}
+
+var saveStatus = checkSaveFiles();
+console.log("Status dos Saves: ", saveStatus);
+
+var headvelocity = 0.0009; 
 
 function drawInterfaceP() {
   Background.draw(0, 0);
@@ -73,29 +100,64 @@ function drawInterfaceP() {
     var textColor = Color.new(29, 29, 29); 
 
     text_new.color = textColor;
-    text_new.print(centerx, 80 + (73 - zz.height) / 2, "NEW");
-    text_new.print(centerx, 167 + (73 - zz.height) / 2, "NEW");
-    text_new.print(centerx, 254 + (73 - zz.height) / 2, "NEW");
+    var saveMessages = ["NEW", "NEW", "NEW"];
+var savePercentages = [0, 0, 0]; 
 
-    if (!transparent) {
-      switch (option_save) {
-        case 1:
-          select_img.draw(173, 80);
-          text_new.color = Color.new(255, 255, 255); 
-          text_new.print(centerx, 80 + (73 - zz.height) / 2, "NEW");
-          break;
-        case 2:
-          select_img.draw(173, 167);
-          text_new.color = Color.new(255, 255, 255); 
-          text_new.print(centerx, 167 + (73 - zz.height) / 2, "NEW");
-          break;
-        case 3:
-          select_img.draw(173, 254);
-          text_new.color = Color.new(255, 255, 255); 
-          text_new.print(centerx, 254 + (73 - zz.height) / 2, "NEW");
-          break;
-      }
+for (var i = 0; i < saveStatus.length; i++) {
+    if (saveStatus[i]) {
+        savePercentages[i] = 1; 
     }
+}
+
+var offsetX = 55;
+
+for (var i = 0; i < 3; i++) {
+
+  if (saveStatus[i]) {
+        text_new.print(centerx - offsetX, 65 + (73 - zz.height) / 2 + (i * 87), "CUPHEAD " + String.fromCharCode(65 + i) + " - " + savePercentages[i] + "%");
+        text_new.print(centerx - offsetX, 90 + (73 - zz.height) / 2 + (i * 87), "Inkwell Isle One"); 
+    } else {
+        text_new.print(centerx, 80 + (73 - zz.height) / 2 + (i * 87), saveMessages[i]);
+    }
+}
+
+if (!transparent) {
+    switch (option_save) {
+        case 1:
+            select_img.draw(173, 80);
+            text_new.color = Color.new(255, 255, 255);
+            if (saveStatus[0]) {
+                text_new.print(centerx - offsetX, 65 + (73 - zz.height) / 2, "CUPHEAD A - " + savePercentages[0] + "%");
+                text_new.print(centerx - offsetX, 90 + (73 - zz.height) / 2, "Inkwell Isle One"); 
+            } else {
+                text_new.print(centerx, 80 + (73 - zz.height) / 2, saveMessages[0]);
+            }
+            break;
+
+        case 2:
+            select_img.draw(173, 167);
+            text_new.color = Color.new(255, 255, 255);
+            if (saveStatus[1]) {
+                text_new.print(centerx - offsetX, 157 + (73 - zz.height) / 2, "CUPHEAD B - " + savePercentages[1] + "%");
+                text_new.print(centerx - offsetX, 187 + (73 - zz.height) / 2, "Inkwell Isle One"); 
+            } else {
+                text_new.print(centerx, 167 + (73 - zz.height) / 2, saveMessages[1]);
+            }
+            break;
+
+        case 3:
+            select_img.draw(173, 254);
+            text_new.color = Color.new(255, 255, 255);
+            if (saveStatus[2]) {
+                text_new.print(centerx - offsetX, 254 + (73 - zz.height) / 2, "CUPHEAD C - " + savePercentages[2] + "%");
+                text_new.print(centerx - offsetX, 274 + (73 - zz.height) / 2, "Inkwell Isle One"); 
+            } else {
+                text_new.print(centerx, 254 + (73 - zz.height) / 2, saveMessages[2]);
+            }
+            break;
+    }
+}
+
 
     if (pad.justPressed(Pads.CROSS) && !transparent) {
       playSoundSelect();
@@ -114,7 +176,9 @@ function drawInterfaceP() {
           if (option_player_1 == 2) {
             Draw.rect(173, 80, 296, 75, Color.new(156, 156, 98, 80));
           }
-          text_player.print(184, 93, "PLEASE SELECT \nPLAYER");
+          text_player.scale = 0.6;
+          text_player.print(184, 93, "PLEASE SELECT");
+          text_player.print(184, 110, "A PLAYER");
           loadFrameHead(head[0], 59, 59, 327, 85);
           loadFrameHead2(head[1], 59, 59, 396, 85);
           break;
@@ -123,7 +187,9 @@ function drawInterfaceP() {
           if (option_player_1 == 2) {
             Draw.rect(173, 167, 296, 75, Color.new(156, 156, 98, 80));
           }
-          text_player.print(184, 180, "PLEASE SELECT \nPLAYER");
+          text_player.scale = 0.6;
+          text_player.print(184, 180, "PLEASE SELECT");
+          text_player.print(184, 197, "A PLAYER");
           loadFrameHead(head[0], 59, 59, 327, 172);
           loadFrameHead2(head[1], 59, 59, 396, 172);
           break;
@@ -132,7 +198,9 @@ function drawInterfaceP() {
           if (option_player_1 == 2) {
             Draw.rect(173, 254, 296, 75, Color.new(156, 156, 98, 80));
           }
-          text_player.print(184, 267, "PLEASE SELECT \nPLAYER");
+          text_player.scale = 0.6;
+          text_player.print(184, 267, "PLEASE SELECT");
+          text_player.print(184, 284, "A PLAYER");
           loadFrameHead(head[0], 59, 59, 327, 259);
           loadFrameHead2(head[1], 59, 59, 396, 259);
           break;
@@ -148,20 +216,20 @@ function drawInterfaceP() {
       scph = true;
 
       if (play_animation) {
-        if (Timer.getTime(time_anim) >= 50) {
-          Timer.setTime(time_anim, 0);
-          if (head[0] == 7 || head[1] == 7) {
-            if (!direction_player) {
-              direction_player = true;
+        if (Timer.getTime(time_anim) >= 50 / headvelocity) { 
+            Timer.setTime(time_anim, 0);
+            if (head[0] == 7 || head[1] == 7) {
+                direction_player = true;
             }
-          }
-          if (head[0] == 2 || head[1] == 2) {
-            if (direction_player) {
-              Sound.deinit();
-              console.log("Loading Book...");
-              std.loadScript("/Scripts/Bookscript/book.js")
+            if (head[0] == 2 || head[1] == 2) {
+                if (direction_player) {
+                  
+                    Sound.deinit();
+                    console.log("Loading Book...");
+                    std.loadScript("/Scripts/Bookscript/book.js");
+                }
             }
-          }
+
           if (!direction_player) {
             switch (option_player_1) {
               case 1:
@@ -182,6 +250,7 @@ function drawInterfaceP() {
                 break;
             }
           }
+
         }
       }
     }
@@ -190,6 +259,11 @@ function drawInterfaceP() {
 
 
 function handlebeforegameplayMenu() {
+
+  if (pad.justPressed(Pads.TRIANGLE) && !stop) {
+  isInInterfaceP = false;
+  }
+
   if (pad.justPressed(Pads.DOWN) && !stop) {
     if (option_save === 3) {
       option_save = 1;
@@ -212,6 +286,7 @@ function handlebeforegameplayMenu() {
     playSoundSelect();
     stop = true;
     interf = true;
+
   }
 
   if (pad.justPressed(Pads.RIGHT) && !play_animation) {
@@ -239,7 +314,6 @@ function handlebeforegameplayMenu() {
     }
     playSoundSelect();
   }
-
   drawInterfaceP();
 }
 console.log("Teste 6");
