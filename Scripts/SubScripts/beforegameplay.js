@@ -99,6 +99,21 @@ function drawInterfaceP() {
     text_new.scale = 0.8;
     var textColor = Color.new(29, 29, 29); 
 
+
+
+    
+
+    cross.draw(440, 420);
+    fonta.scale = 0.5;
+    fonta.print(382, 413,"CONFIRM");
+
+    circle.draw(520, 420);
+    fonta.print(477, 413,"DELETE");
+
+    TRIANGLE.draw(595, 420);
+    fonta.print(562, 413,"BACK");
+
+
     text_new.color = textColor;
     var saveMessages = ["NEW", "NEW", "NEW"];
 var savePercentages = [0, 0, 0]; 

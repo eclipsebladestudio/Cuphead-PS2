@@ -5,6 +5,9 @@ let col3 = Color.new(255, 0, 0);
 const red = Color.new(160, 50, 50);  
 const green = Color.new(50, 160, 50);
 const white = Color.new(255, 255, 255);
+const circle = new Image("Assets/Textures/pads/circle.png");
+const TRIANGLE = new Image("Assets/Textures/pads/triangle.png");
+
 
 const controlsMenuImage = new Image("host:/Assets/Textures/controlsmenu.png")
 const controlsMenuImage2 = new Image("host:/Assets/Textures/controlsmenu2.png")

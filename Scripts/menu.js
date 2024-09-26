@@ -14,6 +14,8 @@ const loadScript = (scriptName) => {
   std.loadScript(`${baseDir}${scriptName}.js`);
 };
 
+const cross = new Image("Assets/Textures/pads/Cross.png");
+
 const scripts = [
   "config",
   "Audio",
@@ -79,6 +81,10 @@ Screen.display(() => {
     drawMenuOption("options", canvas.height / 2 - 15, option === 2);
     drawMenuOption("credits", canvas.height / 2 + 5, option === 3);
     drawMenuOption("exit", canvas.height / 2 + 25, option === 4);
+
+    cross.draw(600, 420);
+    fonta.scale = 0.5;
+    fonta.print(542, 413,"CONFIRM");
 
   } else if (isInSubmenu) {
     if (pad.justPressed(Pads.DOWN) && !stop) {
@@ -164,6 +170,7 @@ Screen.display(() => {
     drawAudioMenu("Sound Effects", canvas.height / 2 - 15, audioMenuOption === 2);
     drawAudioMenu("Music", canvas.height / 2 + 5, audioMenuOption === 3);
     drawAudioMenu("Back", canvas.height / 2 + 25, audioMenuOption === 4);
+    
 
     
 
@@ -176,6 +183,8 @@ Screen.display(() => {
   } else if (isInVisualMenu) {
     handleVisualMenu()
     }
+
+    
    
   
 
@@ -216,6 +225,10 @@ Screen.display(() => {
     transitionbImage.height = canvas.height;
     transitionbImage.draw(0, 0);
 
+
     }
+
+  
+  
 
 });
