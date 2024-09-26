@@ -1,10 +1,10 @@
-
 export class Fade {
-  constructor(image, durationInSeconds, fadeType) {
+  constructor(image, durationInSeconds, fadeType, maxOpacity = 255) {
     this.image = image;
     this.duration = durationInSeconds * 1000; 
     this.fadeType = fadeType; 
-    this.opacity = fadeType === 'in' ? 0 : 255; 
+    this.maxOpacity = maxOpacity; // Adiciona a opacidade máxima
+    this.opacity = fadeType === 'in' ? 0 : maxOpacity; 
     this.startTime = null;
     this.isDrawing = false; 
   }
@@ -16,31 +16,32 @@ export class Fade {
     }
 
     const elapsed = Date.now() - this.startTime;
-    const progress = Math.min(elapsed / this.duration, 1);
+    const progress = Math.min(elapsed / this.duration, 1); 
 
     if (this.fadeType === 'in') {
-      this.opacity = Math.min(255, this.opacity + (255 * progress));
+      this.opacity = this.maxOpacity * progress; 
     } else {
-      this.opacity = Math.max(0, this.opacity - (255 * progress));
+      this.opacity = this.maxOpacity * (1 - progress); 
     }
 
-    this.image.color = Color.new(255, 255, 255, this.opacity);
+    this.image.color = Color.new(200, 200, 200, this.opacity);
+
+    this.image.draw(0, 0); 
 
     if (progress >= 1) {
-      this.startTime = null; 
       this.isDrawing = false; 
     }
   }
 }
 
 export class FadeIn extends Fade {
-  constructor(image, durationInSeconds) {
-    super(image, durationInSeconds, 'in');
+  constructor(image, durationInSeconds, maxOpacity) {
+    super(image, durationInSeconds, 'in', maxOpacity);
   }
 }
 
 export class FadeOut extends Fade {
-  constructor(image, durationInSeconds) {
-    super(image, durationInSeconds, 'out');
+  constructor(image, durationInSeconds, maxOpacity) {
+    super(image, durationInSeconds, 'out', maxOpacity);
   }
 }
