@@ -122,40 +122,47 @@ function adjustVolume(option, change) {
 }
 
 function loadButtonConfigs() {
-  const iniFile = 'host:/Assets/Configuration Files/control1.ini';
+  const iniFile = 'host:/Configuration Files/config.ini';
   try {
-    const file = std.open(iniFile, 'r');
-    const fileContent = file.readAsString();
-    file.close();
-    
-    buttonConfigs = parseIniFile(fileContent);
+      const file = std.open(iniFile, 'r');
+      const fileContent = file.readAsString();
+      file.close();
+
+      buttonConfigs = parseIniFile(fileContent);
+      console.log('Configuração dos botões carregada com sucesso.');
   } catch (e) {
-    console.log(`Erro ao carregar control1.ini: ${e.message}`);
+      console.log(`Erro ao carregar config.ini: ${e.message}`);
   }
 }
 
 function saveButtonConfigs() {
-  const iniFile = 'host:/Assets/Configuration Files/control1.ini';
+  const iniFile = 'host:/Configuration Files/config.ini';
   const content = stringifyIniFile(buttonConfigs);
 
   function stringToArrayBuffer(str) {
-    const length = str.length;
-    const buffer = new ArrayBuffer(length);
-    const view = new Uint8Array(buffer);
-    for (let i = 0; i < length; i++) {
-      view[i] = str.charCodeAt(i);
-    }
-    return buffer;
+      const length = str.length;
+      const buffer = new ArrayBuffer(length);
+      const view = new Uint8Array(buffer);
+      for (let i = 0; i < length; i++) {
+          view[i] = str.charCodeAt(i);
+      }
+      return buffer;
   }
 
   try {
-    const file = std.open(iniFile, 'w');
-    const buffer = stringToArrayBuffer(content);
-    file.write(buffer, 0, buffer.byteLength);
-    file.close();
-    console.log('Configuração dos botões salva com sucesso.');
+      const file = std.open(iniFile, 'w');
+      
+      // Verifique se o arquivo foi aberto corretamente
+      if (!file) {
+          console.log(`Não foi possível abrir o arquivo ${iniFile} para escrita.`);
+      }
+
+      const buffer = stringToArrayBuffer(content);
+      file.write(buffer, 0, buffer.byteLength);
+      file.close();
+      console.log('Configuração dos botões salva com sucesso.');
   } catch (e) {
-    console.log(`Erro ao salvar a configuração dos botões: ${e.message}`);
+      console.log(`Erro ao salvar a configuração dos botões: ${e.message}`);
   }
 }
 
@@ -164,10 +171,10 @@ function parseIniFile(content) {
   const config = {};
 
   lines.forEach(line => {
-    const [key, value] = line.split('=').map(part => part.trim());
-    if (key && value) {
-      config[key] = value === 'True' ? true : (value === 'False' ? false : value);
-    }
+      const [key, value] = line.split('=').map(part => part.trim());
+      if (key && value) {
+          config[key] = value === 'True' ? true : (value === 'False' ? false : value);
+      }
   });
 
   return config;
@@ -177,7 +184,7 @@ function stringifyIniFile(config) {
   let iniContent = '[Controls]\n';
 
   for (const [key, value] of Object.entries(config)) {
-    iniContent += `${key} = ${value}\n`;
+      iniContent += `${key} = ${value}\n`;
   }
 
   return iniContent;

@@ -2,12 +2,15 @@ console.log("imagesandconfigurations Loaded!!!");
 let col1 = Color.new(255, 255, 255); 
 let col2 = Color.new(21, 21, 21);   
 let col3 = Color.new(255, 0, 0);   
-const red = Color.new(160, 50, 50);  
+const black = Color.new(0, 0, 0);
+const red = Color.new(255,127,80);  
+const orange = Color.new(255,127,80);  
 const green = Color.new(50, 160, 50);
 const white = Color.new(255, 255, 255);
 const circle = new Image("Assets/Textures/pads/circle.png");
 const TRIANGLE = new Image("Assets/Textures/pads/triangle.png");
 
+const controlsMenu = new Image("Assets/Textures/controlst.png");
 
 const controlsMenuImage = new Image("host:/Assets/Textures/controlsmenu.png")
 const controlsMenuImage2 = new Image("host:/Assets/Textures/controlsmenu2.png")

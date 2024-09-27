@@ -151,75 +151,164 @@ function togglePlayer() {
 
 loadButtonConfigs();
 
+
+let isInButtonConfigMenu = false;
+let replaceOption = 1;  
+const options = ["Replace", "Remove", "Cancel"];
+
+let selectedActionText = "";  
+function drawReplaceMenu() {
+    drawControlsMenu();
+    Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, 85));
+    controlsMenu.draw((canvas.width - controlsMenu.width) / 2, (canvas.height - controlsMenu.height) / 2);
+
+    const menuY = canvas.height / 2;
+    const optionSpacing = 90;
+    const boxHeight = 18;
+    const boxWidth = 90;
+    const offsetX = -20;
+    const offsetY = 65;
+
+    fonta4.color = black;
+
+    const actionTextWidth = getTextWidth(fonta4, selectedActionText);
+    const centeredActionX = (canvas.width - actionTextWidth) / 2 - 10;
+    fonta4.print(centeredActionX, menuY - 85, selectedActionText);  
+
+    const buttonConfig = buttonConfigs[selectedActionText] || "Unknown"; 
+    const buttonConfigWidth = getTextWidth(fonta2, buttonConfig);
+    const centeredButtonX = (canvas.width - buttonConfigWidth) / 2 - 10; 
+    fonta2.color = Color.new(21, 21, 21);  
+    fonta2.print(centeredButtonX, menuY - 60, buttonConfig);
+
+    options.forEach((option, index) => {
+        const xPosition = (canvas.width - options.length * optionSpacing) / 2 + index * optionSpacing + offsetX;
+        const textWidth = getTextWidth(fonta2, option);
+        const centeredX = xPosition + (boxWidth - textWidth) / 2;
+        const adjustedMenuY = menuY + offsetY;
+
+        if (replaceOption === index + 1) {
+            drawOutlineBox(centeredX - 10, adjustedMenuY - 10, boxWidth, boxHeight, col2);
+            drawFilledBox(centeredX - 10, adjustedMenuY - 10, boxWidth, boxHeight, orange);
+        } else {
+            drawOutlineBox(centeredX - 10, adjustedMenuY - 10, boxWidth, boxHeight, col2);
+        }
+
+        fonta2.color = col2;
+        fonta2.print(centeredX + 15, adjustedMenuY + (boxHeight / 2) - 30, option);
+    });
+}
+
+function updateSelectedAction(action) {
+    selectedActionText = action; 
+}
+
 function handleControlsMenu() {
-    if (pad.justPressed(Pads.CIRCLE) && !stop) {
-        if (isSelectingPlayerOne) { 
-            isSelectingPlayerOne = false;
-            isInControlsMenu = false;
-            isInSubmenu = true;
-        } else {
-            isInControlsMenu = false;
-            isInSubmenu = true;
-        }
-        playSoundSelect();
-    }
+    if (isInButtonConfigMenu) {
 
-    if (pad.justPressed(Pads.DOWN) && !stop) {
-        if (isSelectingPlayerOne) {
-            selectedOption = selectedOption === 14 ? 1 : selectedOption + 1;
-        } else {
-            controlOption = controlOption === 5 ? 1 : controlOption + 1;
+        if (pad.justPressed(Pads.CIRCLE) && !stop) {
+            isInButtonConfigMenu = false;
+            playSoundSelect();
         }
-        playSoundSelect();
-    }
 
-    if (pad.justPressed(Pads.UP) && !stop) {
-        if (isSelectingPlayerOne) {
-            selectedOption = selectedOption === 1 ? 14 : selectedOption - 1;
-        } else {
-            controlOption = controlOption === 1 ? 5 : controlOption - 1;
+        if (pad.justPressed(Pads.RIGHT) && !stop) {
+            replaceOption = (replaceOption % options.length) + 1;  
+            playSoundSelect();
         }
-        playSoundSelect();
-    }
 
-    if (pad.justPressed(Pads.CROSS) && !stop) {
-        if (isSelectingPlayerOne) {
-            if (selectedOption >= 13 && selectedOption <= 14) { 
-                const action = Object.keys(buttonConfigs)[selectedOption - 1];
-                buttonConfigs[action] = buttonConfigs[action] === "Unknown" ? "Selected" : "Unknown";
-                playSoundSelect();
-            }
-        } else {
-            switch (controlOption) {
-                case 1:
-                      
-                    isInControlsMenu = false; 
-                    playSoundSelect();
+        if (pad.justPressed(Pads.LEFT) && !stop) {
+            replaceOption = replaceOption === 1 ? options.length : replaceOption - 1;
+            playSoundSelect();
+        }
+
+        if (pad.justPressed(Pads.CROSS) && !stop) {
+            switch (replaceOption) {
+                case 1: 
+      
                     break;
                 case 2:
-                    playSoundSelect();
+                    buttonConfigs[selectedActionText] = " "; 
+            saveButtonConfigs(); 
+     
                     break;
-                case 3:
-              
-                isRumbleOn = !isRumbleOn;
-                if (isRumbleOn) {
-                    Pads.rumble(0, 1.0, 0.5);
-                } else {
-                    Pads.rumble(0, 0, 0);
-                }
-                playSoundSelect();
-                    break;
-                case 4:
-                    isSelectingPlayerOne = true; 
-                    playSoundSelect();
-                    break;
-                case 5:
-                    isPlayerTwo = true;
-                    playSoundSelect();
+                case 3: 
+                    isInButtonConfigMenu = false;
                     break;
             }
+            playSoundSelect();
         }
-    }
 
-    drawControlsMenu();
+        drawReplaceMenu(); 
+    } else {
+        
+        if (pad.justPressed(Pads.CIRCLE) && !stop) {
+            if (isSelectingPlayerOne) { 
+                isSelectingPlayerOne = false;
+                isInControlsMenu = false;
+                isInSubmenu = true;
+            } else {
+                isInControlsMenu = false;
+                isInSubmenu = true;
+            }
+            playSoundSelect();
+        }
+
+        if (pad.justPressed(Pads.DOWN) && !stop) {
+            if (isSelectingPlayerOne) {
+                selectedOption = selectedOption === 14 ? 1 : selectedOption + 1;
+            } else {
+                controlOption = controlOption === 5 ? 1 : controlOption + 1;
+            }
+            playSoundSelect();
+        }
+
+        if (pad.justPressed(Pads.UP) && !stop) {
+            if (isSelectingPlayerOne) {
+                selectedOption = selectedOption === 1 ? 14 : selectedOption - 1;
+            } else {
+                controlOption = controlOption === 1 ? 5 : controlOption - 1;
+            }
+            playSoundSelect();
+        }
+
+        if (pad.justPressed(Pads.CROSS) && !stop) {
+            if (isSelectingPlayerOne) {
+                if (selectedOption >= 1 && selectedOption <= 14) { 
+                    currentButtonConfig = Object.keys(buttonConfigs)[selectedOption - 1];
+                    selectedActionText = currentButtonConfig; 
+                    isInButtonConfigMenu = true;
+                    playSoundSelect();
+                }
+            } else {
+                switch (controlOption) {
+                    case 1:
+                        isInControlsMenu = false;
+                        playSoundSelect();
+                        break;
+                    case 2:
+                        playSoundSelect();
+                        break;
+                    case 3:
+                        isRumbleOn = !isRumbleOn;
+                        if (isRumbleOn) {
+                            Pads.rumble(0, 1.0, 0.5);
+                        } else {
+                            Pads.rumble(0, 0, 0);
+                        }
+                        playSoundSelect();
+                        break;
+                    case 4:
+                        isSelectingPlayerOne = true;
+                        playSoundSelect();
+                        break;
+                    case 5:
+                        isPlayerTwo = true;
+                        playSoundSelect();
+                        break;
+                }
+            }
+        }
+
+        drawControlsMenu();  
+    }
 }

@@ -1,7 +1,7 @@
 import { FadeIn, FadeOut } from "./Modules/fade.js";
 
 const introImage = new Image("host:/Assets/Textures/LOGO.png");
-const mdhrAnimationSpeed = 40; 
+const mdhrAnimationSpeed = 35; 
 
 const audio = Sound.load("host:/Assets/Music/logo.wav");
 const audioSlot = 0;
