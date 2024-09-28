@@ -114,6 +114,11 @@ function drawInterfaceP() {
     fonta.print(562, 413,"BACK");
 
 
+
+
+
+
+
     text_new.color = textColor;
     var saveMessages = ["NEW", "NEW", "NEW"];
 var savePercentages = [0, 0, 0]; 
@@ -241,7 +246,8 @@ if (!transparent) {
                   
                     Sound.deinit();
                     console.log("Loading Book...");
-                    std.loadScript("/Scripts/Bookscript/book.js");
+                
+                    std.loadScript("Scripts/Bookscript/book.js");
                 }
             }
 

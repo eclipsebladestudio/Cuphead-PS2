@@ -3,7 +3,7 @@ export class Fade {
     this.image = image;
     this.duration = durationInSeconds * 1000; 
     this.fadeType = fadeType; 
-    this.maxOpacity = maxOpacity; // Adiciona a opacidade máxima
+    this.maxOpacity = maxOpacity; 
     this.opacity = fadeType === 'in' ? 0 : maxOpacity; 
     this.startTime = null;
     this.isDrawing = false; 
