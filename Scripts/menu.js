@@ -40,35 +40,7 @@ scripts.forEach(script => loadScript(script));
 //CREDITS
 
 function Credits() {
-  function deleteCredits() {
-    // Limpar as imagens
-    logoebd = null;
-    for (let i = 0; i < fx3.length; i++) {
-        fx3[i] = null;
-    }
-
-    // Limpar fontes
-    fant = null;
-
-    // Limpar textos
-    texts = {};
-    introText.length = 0;
-    textLines.length = 0;
-
-    // Limpar variáveis de animação
-    fx3Index = 0;
-    fx3Direction = 1;
-    lastFx3UpdateTime = Date.now();
-    creditsOffset = canvas.height;
-    startCredits = false;
-    showingLogo = false;
-
-    // Chamar coleta de lixo
-    if (typeof std.gc === 'function') {
-        std.gc();
-    }
-}
-
+  
   var gray = Color.new(11, 11, 11, 255);
   var logoebd = new Image("host:/Assets/Textures/eclipse_credits_final.png");
   var fant = new Font("host:/Assets/Font/bold.ttf");
