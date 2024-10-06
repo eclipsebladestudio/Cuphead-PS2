@@ -3,7 +3,6 @@ canvas.width = 640;
 canvas.height = 448;
 Screen.setMode(canvas);
 
-
 let pad = Pads.get();
 let stop = false;
 
@@ -31,6 +30,200 @@ const scripts = [
 ];
 
 scripts.forEach(script => loadScript(script));
+
+
+
+
+
+
+
+//CREDITS
+
+function Credits() {
+  function deleteCredits() {
+    // Limpar as imagens
+    logoebd = null;
+    for (let i = 0; i < fx3.length; i++) {
+        fx3[i] = null;
+    }
+
+    // Limpar fontes
+    fant = null;
+
+    // Limpar textos
+    texts = {};
+    introText.length = 0;
+    textLines.length = 0;
+
+    // Limpar variáveis de animação
+    fx3Index = 0;
+    fx3Direction = 1;
+    lastFx3UpdateTime = Date.now();
+    creditsOffset = canvas.height;
+    startCredits = false;
+    showingLogo = false;
+
+    // Chamar coleta de lixo
+    if (typeof std.gc === 'function') {
+        std.gc();
+    }
+}
+
+  var gray = Color.new(11, 11, 11, 255);
+  var logoebd = new Image("host:/Assets/Textures/eclipse_credits_final.png");
+  var fant = new Font("host:/Assets/Font/bold.ttf");
+  fant.scale = 1;
+
+  var fx3 = [];
+  for (let i = 1; i <= 10; i++) {
+      fx3.push(new Image(`host:/Assets/Textures/FX/${i}.png`));
+  }
+  let fx3Index = 0;
+  let fx3Direction = 1;
+  let lastFx3UpdateTime = Date.now();
+  var fx3AnimationSpeed = 20;
+
+  var lineSpacing = 30;
+  var initialFontSize = 12;  
+  var maxFontSize = 14;
+  var scrollSpeed = 0.3;
+
+  let startCredits = false;
+  let introStartTime = Date.now();
+  let creditsOffset = canvas.height;
+  let logoStartTime = null;
+  let showingLogo = false;
+  var introDuration = 6000;
+  var logoDuration = 5000;
+
+  
+  Sound.play(credit, audioSlot3);
+
+  let texts = {};
+  const introText = [
+      texts["intro_text1"] || "Before starting, none of this would be possible in this capacity",
+      texts["intro_text2"] || "without the help of Daniel Santos, creator of the AthenaENV engine,",
+      texts["intro_text3"] || "among other projects. I thank Daniel in advance for everything he",
+      texts["intro_text4"] || "has done to help us. Thank you very much, Mr. Daniel."
+  ];
+
+  const textLines = [
+      { text: texts["owners_title"] || "Owners", color: Color.new(255, 0, 0) },
+      { text: texts["owners_name"] || "NGM MODS", color: Color.new(255, 255, 255) },
+      { text: texts["owners_member"] || "Daviz7", color: Color.new(255, 255, 255) },
+      { text: "", color: Color.new(255, 255, 255) },
+      { text: texts["co_owner_title"] || "Co-Owner", color: Color.new(255, 0, 0) },
+      { text: texts["co_owner_name"] || "Lucas Teles", color: Color.new(255, 255, 255) },
+      { text: "", color: Color.new(255, 255, 255) },
+      { text: texts["tools_title"] || "Tools", color: Color.new(255, 0, 0) },
+      { text: texts["tools_name"] || "Lucas Teles", color: Color.new(255, 255, 255) },
+      { text: "", color: Color.new(255, 255, 255) },
+      { text: texts["ui_programming_title"] || "UI Programming", color: Color.new(255, 0, 0) },
+      { text: texts["ui_programming_team1"] || "NGM MODS", color: Color.new(255, 255, 255) },
+      { text: texts["ui_programming_team2"] || "Daviz7", color: Color.new(255, 255, 255) },
+      { text: "", color: Color.new(255, 255, 255) },
+      { text: texts["gameplay_programming_title"] || "Gameplay Programming", color: Color.new(255, 0, 0) },
+      { text: texts["gameplay_programming_team1"] || "Fatality", color: Color.new(255, 255, 255) },
+      { text: texts["gameplay_programming_team2"] || "Devecoisas", color: Color.new(255, 255, 255) },
+      { text: texts["gameplay_programming_team1"] || "Axel", color: Color.new(255, 255, 255) },
+      { text: "", color: Color.new(255, 255, 255) },
+      { text: texts["design_title"] || "Designer", color: Color.new(255, 0, 0) },
+      { text: texts["design_name"] || "Tayklor", color: Color.new(255, 255, 255) },
+      { text: texts["design_name"] || "Saimon", color: Color.new(255, 255, 255) },
+      { text: "", color: Color.new(255, 255, 255) },
+      { text: texts["honorable_mentions_title"] || "Honorable Mentions", color: Color.new(255, 0, 0) },
+      { text: texts["honorable_mentions_text"] || "Zeca Apelão For sprites and sounds help", color: Color.new(255, 255, 255) },
+      { text: texts["honorable_mentions_text"] || "Kianzitou For sprites help", color: Color.new(255, 255, 255) },
+      { text: texts["honorable_mentions_text"] || "Gabe Developer For sprites, Sounds and Tool help", color: Color.new(255, 255, 255) },
+      { text: texts["honorable_mentions_text"] || "Neutrico Made a Logo of Eclipse", color: Color.new(255, 255, 255) }
+  ];
+
+  function preProcessText(lines, fontSize) {
+      let processedLines = [];
+      fant.scale = fontSize / 20;
+      
+      for (let i = 0; i < lines.length; i++) {
+          let line = lines[i].text;
+          let size = fant.getTextSize(line);
+          processedLines.push({ text: line, size: size, color: lines[i].color });
+      }
+      return processedLines;
+  }
+
+  let processedIntroText = preProcessText(introText.map(text => ({ text, color: Color.new(255, 255, 255) })), initialFontSize);
+  let processedTextLines = preProcessText(textLines, initialFontSize);
+
+  function drawText(processedLines, yOffset) {
+      const centerX = canvas.width / 2;
+      let y = yOffset;
+
+      for (let i = 0; i < processedLines.length; i++) {
+          let line = processedLines[i].text;
+          let color = processedLines[i].color;
+          let size = processedLines[i].size;
+
+          fant.color = color;
+          fant.print(centerX - size.width / 2, y, line);
+
+          y += lineSpacing;
+      }
+  }
+
+  Screen.display(() => {
+      const currentTime = Date.now();
+      
+      if (!startCredits) {
+          const introElapsed = Date.now() - introStartTime;
+          if (introElapsed < introDuration) {
+              drawText(processedIntroText, canvas.height / 2 - (processedIntroText.length * lineSpacing) / 2);
+          } else {
+              startCredits = true;
+              introStartTime = Date.now();
+          }
+      } else if (!showingLogo) {
+          let y = creditsOffset;
+          drawText(processedTextLines, y);
+
+          creditsOffset -= scrollSpeed;
+
+          if (creditsOffset + processedTextLines.length * lineSpacing < 0) {
+              creditsOffset = canvas.height;
+              showingLogo = true;
+              logoStartTime = Date.now();
+          }
+      } else {
+          logoebd.draw(canvas.width / 2 - logoebd.width / 2, canvas.height / 2 - logoebd.height / 2);
+
+          if (Date.now() - logoStartTime >= logoDuration) {
+            
+          }
+      }
+
+      if (currentTime - lastFx3UpdateTime >= fx3AnimationSpeed) {
+          fx3Index += fx3Direction;
+
+          if (fx3Index >= fx3.length || fx3Index < 0) {
+              fx3Direction *= -1;
+              fx3Index += fx3Direction;
+          }
+
+          lastFx3UpdateTime = currentTime;
+      }
+
+      fx3[fx3Index].draw(0, 0);
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
 
 Screen.display(() => {
   pad.update();
@@ -214,7 +407,7 @@ Screen.display(() => {
           transitionbCompleted = true;
 
           Sound.pause(audio);
-          std.loadScript("host:/Scripts/credits.js");
+          Credits();
         }
         lastTransitionbUpdateTime = currentTime;
       }
