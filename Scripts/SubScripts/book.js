@@ -1,9 +1,43 @@
 
-let currentStage = 1; 
+let currentPage = 1; 
 
-function stage1() {
+var intro = Sound.load("host:/Assets/Music/intro_book_music.wav");
+var introSlot = 5; 
 
-    const imagePaths = Array.from({ length: 23 }, (_, i) => `Assets/Textures/StoryBook/Book/${i + 1}.png`);
+Sound.play(intro, introSlot);
+
+const red_t = Color.new(0, 0, 0, 100);
+    const fontDefault = new Font("Assets/Font/controls.otf");
+    fontDefault.color = red_t;
+    fontDefault.scale = 0.6;
+
+function debug() {
+
+    const free_mem = System.getMemoryStats();
+  const free_vram = Screen.getFreeVRAM();
+  const ram_usage = System.getMemoryStats();
+  const ramUse = (ram_usage.used / 1048576).toFixed(2);
+  
+  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
+  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
+  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
+  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+
+}
+
+const FX2 = [];
+for (let i = 1; i <= 20; i++) {
+  FX2.push(new Image(`host:/Assets/Textures/FX/${i}.png`));
+}
+
+let FX2Index = 0;
+let FX2Direction = 1;
+let lastFX2UpdateTime = Date.now();
+const FX2AnimationSpeed = 40;
+
+function page1() {
+
+    const imagePaths = Array.from({ length: 60 }, (_, i) => `Assets/Textures/StoryBook/Book/${i + 1}.png`);
     const images = imagePaths.map(path => {
         const img = new Image(path);
         img.width = 640;
@@ -15,17 +49,14 @@ function stage1() {
     let playingAnimation = false;
     let crossPressed = false; 
     let lastUpdateTime = 0;
-    const animationSpeed = 100;
+    const animationSpeed = 70;
 
     let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
     let arrowPosition = 400;
     let arrowDirection = 1;
     const arrowSpeed = 1; 
 
-    const red_t = Color.new(0, 0, 0, 100);
-    const fontDefault = new Font("Assets/Font/controls.otf");
-    fontDefault.color = red_t;
-    fontDefault.scale = 0.6;
+    
 
     const storyText = 
     `Once upon a time, in a magical place called Inkwell Isle, there 
@@ -56,7 +87,7 @@ without a care under the watchful eye of the wise Elder Kettle.`;
         if (Pads.get(0).justPressed(Pads.CROSS)) {
             if (currentIndex === images.length - 1) {
                 delete_images();
-                currentStage = 2; 
+                currentPage = 2; 
                 break; 
             }
         }
@@ -89,21 +120,24 @@ without a care under the watchful eye of the wise Elder Kettle.`;
             });
         }
 
-        const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+        if (FX2.length > 0) {
+            const now = Date.now();
+            if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+              FX2Index += FX2Direction;
+              if (FX2Index >= FX2.length || FX2Index < 0) {
+                FX2Direction *= -1;
+                FX2Index += FX2Direction;
+              }
+              lastFX2UpdateTime = now;
+            }
+            FX2[FX2Index].draw(0, 0); 
+          }
 
         Screen.flip();
     }
 }
 
-function stage2() {
+function page2() {
 
   const imagePaths = Array.from({ length: 22 }, (_, i) => `Assets/Textures/StoryBook/Page01-02/${i + 1}.png`);
   const images = imagePaths.map(path => {
@@ -117,17 +151,12 @@ function stage2() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
-
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
 
   const storyText = 
   `One day the two boys wandered far from home, and - despite
@@ -158,7 +187,7 @@ of the tracks and entered the Devi's Casino.`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 3;
+              currentPage = 3;
               break; 
           }
       }
@@ -190,21 +219,25 @@ of the tracks and entered the Devi's Casino.`;
               fontDefault.print(80, 333 + index * 20, line);
           });
       }
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
 
       Screen.flip();
   }
 }
 
-function stage3() {
+function page3() {
   const imagePaths = Array.from({ length: 23 }, (_, i) => `Assets/Textures/StoryBook/Page02-03/${i + 1}.png`);
   const images = imagePaths.map(path => {
       const img = new Image(path);
@@ -217,17 +250,12 @@ function stage3() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
-
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
 
   const storyText = 
   `Inside, Cuphead and Mugman soon found themselves on a 
@@ -255,7 +283,7 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 4; 
+              currentPage = 4; 
               break; 
           }
       }
@@ -288,21 +316,25 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
           });
       }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
+
 
       Screen.flip();
   }
 }
 
-function stage4() {
+function page4() {
 
   const imagePaths = Array.from({ length: 15 }, (_, i) => `Assets/Textures/StoryBook/Page03-04/${i + 1}.png`);
   const images = imagePaths.map(path => {
@@ -316,17 +348,12 @@ function stage4() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
-
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
 
   const storyText = 
   `"Nice run, boys," laughed a newcomer. The brothers gasped.
@@ -355,7 +382,7 @@ we raise the skates?" he suggested with a toothy grin.`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 5; 
+              currentPage = 5; 
               break; 
           }
       }
@@ -387,22 +414,26 @@ we raise the skates?" he suggested with a toothy grin.`;
               fontDefault.print(80, 333 + index * 20, line);
           });
       }
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+
 
       Screen.flip();
   }
 }
 
-function stage5() {
+function page5() {
 
   const imagePaths = Array.from({ length: 23 }, (_, i) => `Assets/Textures/StoryBook/Page04-05/${i + 1}.png`);
   const images = imagePaths.map(path => {
@@ -416,22 +447,16 @@ function stage5() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
 
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
-
   const storyText = 
-  `Inside, Cuphead and Mugman soon found themselves on a 
-winning streak at the Craps table. "How dawg!" exclaimed king
-Dice, the casino's sleazy manager. "These fellas can't lose!"`;
+  `"Win one more roll, and all the loot in my casino is yours!" the
+Devil boomed. "But if you lose, I'll have your souls! Deal?"`;
 
 
   function delete_images() {
@@ -457,7 +482,7 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 6; 
+              currentPage = 6; 
               break; 
           }
       }
@@ -490,23 +515,26 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
           });
       }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
 
       Screen.flip();
   }
 }
 
-function stage6() {
+function page6() {
  
-  const imagePaths = Array.from({ length: 18 }, (_, i) => `Assets/Textures/StoryBook/Page05-06/${i + 1}.png`);
+  const imagePaths = Array.from({ length: 22 }, (_, i) => `Assets/Textures/StoryBook/Page05-06/${i + 1}.png`);
   const images = imagePaths.map(path => {
       const img = new Image(path);
       img.width = 640;
@@ -518,22 +546,17 @@ function stage6() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
 
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
-
   const storyText = 
-  `Inside, Cuphead and Mugman soon found themselves on a 
-winning streak at the Craps table. "How dawg!" exclaimed king
-Dice, the casino's sleazy manager. "These fellas can't lose!"`;
+  `Cuphead, blinded by easy riches, nodded and grabbed the
+dice for a throw. "Good gosh, Cuphead, no!" cried Mugman, for
+he understood the danger. But it was too late!`;
 
 
   function delete_images() {
@@ -558,7 +581,7 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 7; 
+              currentPage = 7; 
               break; 
           }
       }
@@ -591,23 +614,27 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
           });
       }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
 
       Screen.flip();
   }
 }
 
-function stage7() {
+function page7() {
 
-  const imagePaths = Array.from({ length: 18 }, (_, i) => `Assets/Textures/StoryBook/Page06-07/${i + 1}.png`);
+  const imagePaths = Array.from({ length: 22 }, (_, i) => `Assets/Textures/StoryBook/Page06-07/${i + 1}.png`);
   const images = imagePaths.map(path => {
       const img = new Image(path);
       img.width = 640;
@@ -619,22 +646,17 @@ function stage7() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
 
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
-
   const storyText = 
-  `Inside, Cuphead and Mugman soon found themselves on a 
-winning streak at the Craps table. "How dawg!" exclaimed king
-Dice, the casino's sleazy manager. "These fellas can't lose!"`;
+  `"Snake eyes!" laughed the Devil while slamming the floor.
+"You lose!" The brothers trembled in fear as he loomed over
+them. "Now, about those shouls..."`;
 
 
   function delete_images() {
@@ -660,7 +682,7 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 8; 
+              currentPage = 8; 
               break;
           }
       }
@@ -693,23 +715,26 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
           });
       }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
 
       Screen.flip();
   }
 }
 
-function stage8() {
+function page8() {
 
-  const imagePaths = Array.from({ length: 18 }, (_, i) => `Assets/Textures/StoryBook/Page07-08/${i + 1}.png`);
+  const imagePaths = Array.from({ length: 22 }, (_, i) => `Assets/Textures/StoryBook/Page07-08/${i + 1}.png`);
   const images = imagePaths.map(path => {
       const img = new Image(path);
       img.width = 640;
@@ -721,22 +746,17 @@ function stage8() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
 
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
-
   const storyText = 
-  `Inside, Cuphead and Mugman soon found themselves on a 
-winning streak at the Craps table. "How dawg!" exclaimed king
-Dice, the casino's sleazy manager. "These fellas can't lose!"`;
+  `The brothers pleaded for their very lives. "Th-there must
+be another w-way to repay you," Mugman stammered. "Yes,
+p-please, mister!" Cuphead Added.`;
 
  
   function delete_images() {
@@ -762,7 +782,7 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 9; 
+              currentPage = 9; 
               break; 
           }
       }
@@ -795,23 +815,27 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
           });
       }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
 
       Screen.flip();
   }
 }
 
-function stage9() {
+function page9() {
 
-  const imagePaths = Array.from({ length: 18 }, (_, i) => `Assets/Textures/StoryBook/Page07-08/${i + 1}.png`);
+  const imagePaths = Array.from({ length: 15 }, (_, i) => `Assets/Textures/StoryBook/Page08-09/${i + 1}.png`);
   const images = imagePaths.map(path => {
       const img = new Image(path);
       img.width = 640;
@@ -823,22 +847,17 @@ function stage9() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
 
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
-
   const storyText = 
-  `Inside, Cuphead and Mugman soon found themselves on a 
-winning streak at the Craps table. "How dawg!" exclaimed king
-Dice, the casino's sleazy manager. "These fellas can't lose!"`;
+  `"Hmm, perhaps there is," the Devil snickered, pulling out a 
+parchment. "I have here a list of my runaway debtors. Collect
+their souls for me, and I just might pardon you two mugs."`;
 
 
   function delete_images() {
@@ -864,7 +883,7 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 10; 
+              currentPage = 10; 
               break; 
           }
       }
@@ -897,23 +916,26 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
           });
       }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
 
       Screen.flip();
   }
 }
 
-function stage10() {
+function page10() {
 
-  const imagePaths = Array.from({ length: 18 }, (_, i) => `Assets/Textures/StoryBook/Page08-09/${i + 1}.png`);
+  const imagePaths = Array.from({ length: 15 }, (_, i) => `Assets/Textures/StoryBook/Page09-10/${i + 1}.png`);
   const images = imagePaths.map(path => {
       const img = new Image(path);
       img.width = 640;
@@ -925,22 +947,17 @@ function stage10() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
 
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
-
   const storyText = 
-  `Inside, Cuphead and Mugman soon found themselves on a 
-winning streak at the Craps table. "How dawg!" exclaimed king
-Dice, the casino's sleazy manager. "These fellas can't lose!"`;
+  `"Now get going!" the Devil roared, kicking the boys out most
+rudely. "You have 'til midnight tomorrow to collect every one of
+those souls! Otherwise I'll be the one collecting yours!"`;
 
 
   function delete_images() {
@@ -966,7 +983,7 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 11;
+              currentPage = 11;
               break; 
           }
       }
@@ -999,23 +1016,27 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
           });
       }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
+          }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
+      }
+
 
       Screen.flip();
   }
 }
 
-function stage11() {
+function page11() {
 
-  const imagePaths = Array.from({ length: 18 }, (_, i) => `Assets/Textures/StoryBook/Page09-10/${i + 1}.png`);
+  const imagePaths = Array.from({ length: 14 }, (_, i) => `Assets/Textures/StoryBook/Page10-11/${i + 1}.png`);
   const images = imagePaths.map(path => {
       const img = new Image(path);
       img.width = 640;
@@ -1027,22 +1048,17 @@ function stage11() {
   let playingAnimation = false;
   let crossPressed = false; 
   let lastUpdateTime = 0;
-  const animationSpeed = 100;
+  const animationSpeed = 70;
 
   let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
   let arrowPosition = 400;
   let arrowDirection = 1;
   const arrowSpeed = 1; 
 
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
-
   const storyText = 
-  `Inside, Cuphead and Mugman soon found themselves on a 
-winning streak at the Craps table. "How dawg!" exclaimed king
-Dice, the casino's sleazy manager. "These fellas can't lose!"`;
+  `Cuphead and Mugman were terribly frightened and ran away
+as fast as they could. "C'mon, Mug!" panted Cuphead. "We have
+to find the Elder Kettle. He'll know what to do!"`;
 
 
   function delete_images() {
@@ -1068,7 +1084,7 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
       if (Pads.get(0).justPressed(Pads.CROSS)) {
           if (currentIndex === images.length - 1) {
               delete_images();
-              currentStage = 12; 
+              currentPage = 12; 
               break;
           }
       }
@@ -1100,160 +1116,58 @@ Dice, the casino's sleazy manager. "These fellas can't lose!"`;
           });
       }
 
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
-
-      Screen.flip();
-  }
-}
-
-function stage12() {
-
-  const imagePaths = Array.from({ length: 18 }, (_, i) => `Assets/Textures/StoryBook/Page10-11/${i + 1}.png`);
-  const images = imagePaths.map(path => {
-      const img = new Image(path);
-      img.width = 640;
-      img.height = 448;
-      return img;
-  });
-
-  let currentIndex = 0;
-  let playingAnimation = false;
-  let crossPressed = false; 
-  let lastUpdateTime = 0;
-  const animationSpeed = 100;
-
-  let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
-  let arrowPosition = 400;
-  let arrowDirection = 1;
-  const arrowSpeed = 1; 
-
-  const red_t = Color.new(0, 0, 0, 100);
-  const fontDefault = new Font("Assets/Font/controls.otf");
-  fontDefault.color = red_t;
-  fontDefault.scale = 0.6;
-
-  const storyText = 
-  `Inside, Cuphead and Mugman soon found themselves on a 
-winning streak at the Craps table. "How dawg!" exclaimed king
-Dice, the casino's sleazy manager. "These fellas can't lose!"`;
-
-
-  function delete_images() {
-      for (let i = 0; i < images.length; i++) {
-          images[i] = null; 
-      }
-      if (typeof std.gc === 'function') {
-          std.gc(); 
-      }
-  }
-
-  while (true) {
-      const currentTime = Date.now();
-      Screen.clear();
-
-
-      arrowPosition += arrowSpeed * arrowDirection;
-      if (arrowPosition >= 420 || arrowPosition <= 400) {
-          arrowDirection *= -1;
-      }
-
-
-      if (Pads.get(0).justPressed(Pads.CROSS)) {
-          if (currentIndex === images.length - 1) {
-              delete_images();
-              currentStage = 4; 
-              break; 
+      if (FX2.length > 0) {
+        const now = Date.now();
+        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
+          FX2Index += FX2Direction;
+          if (FX2Index >= FX2.length || FX2Index < 0) {
+            FX2Direction *= -1;
+            FX2Index += FX2Direction;
           }
+          lastFX2UpdateTime = now;
+        }
+        FX2[FX2Index].draw(0, 0); 
       }
-
-      if (playingAnimation) {
-          const currentImage = images[currentIndex];
-          currentImage.draw(0, 0);
-
-          if (currentTime - lastUpdateTime >= animationSpeed) {
-              lastUpdateTime = currentTime;
-              currentIndex++;
-
-              if (currentIndex >= images.length) {
-                  currentIndex = images.length - 1;
-              }
-          }
-      } else {
-          playingAnimation = true;
-          lastUpdateTime = currentTime;
-      }
-
-      
-      if (currentIndex === images.length - 1) {
-          arrow.draw(arrowPosition + 120, 410);
-
-          const lines = storyText.split('\n');
-          lines.forEach((line, index) => {
-              fontDefault.print(80, 333 + index * 20, line);
-          });
-      }
-
-      const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
 
       Screen.flip();
   }
 }
 
 while (true) {
-    switch (currentStage) {
+    switch (currentPage) {
         case 1:
-            stage1(); 
+            page1(); 
             break;
         case 2:
-            stage2(); 
+            page2(); 
             break;
         case 3:
-            stage3(); 
+            page3(); 
             break;
         case 4:
-            stage4(); 
+            page4(); 
             break;
         case 5:
-            stage5(); 
+            page5(); 
             break;
         case 6:
-            stage6(); 
+            page6(); 
             break;
         case 7:
-            stage7(); 
+            page7(); 
             break;
         case 8:
-            stage8(); 
+            page8(); 
             break;
         case 9:
-            stage9(); 
+            page9(); 
             break;
         case 10:
-            stage10(); 
+            page10(); 
             break;
         case 11:
-            stage11(); 
+            page11(); 
             break;
-            case 12:
-            stage11(); 
-            break;
-
         default:
             break;
     }

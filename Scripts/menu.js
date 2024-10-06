@@ -164,7 +164,7 @@ function Credits() {
           logoebd.draw(canvas.width / 2 - logoebd.width / 2, canvas.height / 2 - logoebd.height / 2);
 
           if (Date.now() - logoStartTime >= logoDuration) {
-            
+            System.loadELF(System.loadELF(System.boot_path + "/athena.elf", ["Scripts/Subscripts/book.js"]) );
           }
       }
 

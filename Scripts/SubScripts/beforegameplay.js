@@ -1,3 +1,4 @@
+
 console.log("beforegameplay Loaded!!!");
 console.log("Teste 1");
 var bold2 = new Font("Assets/Font/bold.ttf");
@@ -244,10 +245,10 @@ if (!transparent) {
             if (head[0] == 2 || head[1] == 2) {
                 if (direction_player) {
                   
-                    Sound.deinit();
+                    Sound.pause(audio, audioSlot);
                     console.log("Loading Book...");
                 
-                    std.loadScript("Scripts/Subscripts/book.js");
+                    System.loadELF(System.loadELF(System.boot_path + "/book.ini", ["Scripts/Subscripts/book.js"]) );
                 }
             }
 

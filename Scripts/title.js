@@ -1,3 +1,4 @@
+
 ["host:/Modules/outline.js", 
  "host:/Scripts/SubScripts/Audio.js"].forEach(script => std.loadScript(script));
 
@@ -9,11 +10,6 @@ const font = new Font("host:/Assets/Font/bold.ttf");
 const fontOutline = new FontOutline(font);
 font.scale = 0.8;
 font.color = Color.new(255, 255, 0);
-
-const red_t = Color.new(255, 0, 0, 100);
-const fontDefault = new Font("host:/Assets/Font/bold.ttf");
-fontDefault.color = red_t;
-fontDefault.scale = Math.fround(1);
 
 const outlineColor = Color.new(0, 0, 0, 200);
 
@@ -139,16 +135,6 @@ Screen.display(() => {
     if (showText) {
         fontOutline.print(centerX, 400.0, text, 1, outlineColor);
     }
-
-    const free_mem = System.getMemoryStats();
-  const free_vram = Screen.getFreeVRAM();
-  const ram_usage = System.getMemoryStats();
-  const ramUse = (ram_usage.used / 1048576).toFixed(2);
-  
-  fontDefault.print(0, 50, "Using RAM: " + ramUse + " MB/32MB");
-  fontDefault.print(0, 100, "Free RAM: " + (32 - ramUse) + " MB/32MB");
-  fontDefault.print(0, 150, "Used RAM: " + ram_usage.used + " B");
-  fontDefault.print(0, 200, "Free VRAM: " + free_vram + " KB");
 
     overlayImages[overlayIndex].draw(0, 0);
 });
