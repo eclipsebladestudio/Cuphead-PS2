@@ -34,9 +34,6 @@ scripts.forEach(script => loadScript(script));
 
 
 
-
-
-
 //CREDITS
 
 function Credits() {

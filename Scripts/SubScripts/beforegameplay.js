@@ -247,7 +247,7 @@ if (!transparent) {
                     Sound.deinit();
                     console.log("Loading Book...");
                 
-                    std.loadScript("Scripts/Bookscript/book.js");
+                    std.loadScript("Scripts/Subscripts/book.js");
                 }
             }
 
