@@ -1,3 +1,4 @@
+import { FadeIn, FadeOut } from "/Modules/fade.js";
 
 let currentPage = 1; 
 
@@ -11,38 +12,7 @@ const fontDefault = new Font("Assets/Font/controls.otf");
 fontDefault.color = red_t;
 fontDefault.scale = 0.6;
 
-const FX2 = [];
-for (let i = 1; i <= 20; i++) {
-    FX2.push(new Image(`host:/Assets/Textures/FX/${i}.png`));
-}
-
-let FX2Index = 0;
-let FX2Direction = 1;
-let lastFX2UpdateTime = Date.now();
-const FX2AnimationSpeed = 40;
-
 const arrowSpeed = 1; 
-
-function animateFX2() {
-    if (FX2.length > 0) {
-        const now = Date.now();
-        if (now - lastFX2UpdateTime > FX2AnimationSpeed) {
-            FX2Index += FX2Direction;
-
-            
-            if (FX2Index >= FX2.length) {
-                FX2Index = 0;  
-            } else if (FX2Index < 0) {
-                FX2Index = FX2.length - 1;  
-            }
-
-            lastFX2UpdateTime = now;
-        }
-
-        FX2[FX2Index].draw(0, 0); 
-    }
-}
-
 
 function delete_images(images) {
     for (let i = 0; i < images.length; i++) {
@@ -112,7 +82,7 @@ function animatePage(images, arrow, storyText) {
             drawText(storyText);
         }
 
-        animateFX2();
+        
         Screen.flip();
     }
 }
@@ -314,25 +284,82 @@ animatePage(images, arrow, storyText);
 }
 
 function page11() {
+    const imagePaths = Array.from({ length: 14 }, (_, i) => `Assets/Textures/StoryBook/Page10-11/${i + 1}.png`);
+    const images = imagePaths.map(path => {
+        const img = new Image(path);
+        img.width = 640;
+        img.height = 448;
+        return img;
+    });
 
-  const imagePaths = Array.from({ length: 14 }, (_, i) => `Assets/Textures/StoryBook/Page10-11/${i + 1}.png`);
-  const images = imagePaths.map(path => {
-      const img = new Image(path);
-      img.width = 640;
-      img.height = 448;
-      return img;
-  });
+    let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
+    
+    const storyText = 
+    `Cuphead and Mugman were terribly frightened and ran away
+    as fast as they could. "C'mon, Mug!" panted Cuphead. "We have
+    to find the Elder Kettle. He'll know what to do!"`;
 
-  let arrow = new Image("Assets/Textures/StoryBook/book_arrow.png");
-  
-  const storyText = 
-  `Cuphead and Mugman were terribly frightened and ran away
-as fast as they could. "C'mon, Mug!" panted Cuphead. "We have
-to find the Elder Kettle. He'll know what to do!"`;
+    let currentIndex = 0; 
+    let playingAnimation = false; 
+    let lastUpdateTime = 0;
+    let arrowPosition = 400; 
+    let arrowDirection = 1; 
+
+    const animationSpeed = 50; 
 
 
-  
-animatePage(images, arrow, storyText);
+    const lastImageFade = new FadeOut(images[images.length - 1], 4, 85); 
+
+    while (true) {
+        const currentTime = Date.now();
+        Screen.clear();
+
+
+        arrowPosition += arrowSpeed * arrowDirection;
+        if (arrowPosition >= 420 || arrowPosition <= 400) {
+            arrowDirection *= -1;
+        }
+
+
+        if (Pads.get(0).justPressed(Pads.CROSS)) {
+            if (currentIndex === images.length - 1) {
+
+                if (!lastImageFade.isDrawing) {
+                    lastImageFade.play(); 
+                }
+            }
+        }
+
+        if (lastImageFade.isDrawing) {
+            lastImageFade.play(); 
+
+            if (!lastImageFade.isDrawing) {
+                Sound.pause(intro, introSlot); 
+                std.loadScript("Scripts/loading.js"); 
+                break; 
+            }
+        } else {
+
+            const currentImage = images[currentIndex];
+            currentImage.draw(0, 0);
+
+            if (currentTime - lastUpdateTime >= animationSpeed) {
+                lastUpdateTime = currentTime;
+                currentIndex++;
+
+                if (currentIndex >= images.length) {
+                    currentIndex = images.length - 1;
+                }
+            }
+        }
+
+        if (currentIndex === images.length - 1) {
+            drawArrow(arrow, arrowPosition);
+            drawText(storyText);
+        }
+
+        Screen.flip();
+    }
 }
 
 while (true) {
