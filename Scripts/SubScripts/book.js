@@ -18,9 +18,8 @@ function delete_images(images) {
     for (let i = 0; i < images.length; i++) {
         images[i] = null; 
     }
-    if (typeof std.gc === 'function') {
-        std.gc(); 
-    }
+    std.gc(); 
+
 }
 
 function drawArrow(arrow, arrowPosition) {

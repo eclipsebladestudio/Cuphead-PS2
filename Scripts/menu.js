@@ -92,9 +92,9 @@ function deleteImages() {
     FX2.length = 0;
     transitionbImages.forEach(image => image = null);
     transitionbImages.length = 0;
-    if (typeof std.gc === 'function') {
+
       std.gc();
-    }
+    
   }
 
 console.log("menuandsubmenu Loaded!!!");
