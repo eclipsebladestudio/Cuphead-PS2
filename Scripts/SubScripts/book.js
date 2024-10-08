@@ -64,6 +64,11 @@ function animatePage(images, arrow, storyText) {
             const currentImage = images[currentIndex];
             currentImage.draw(0, 0);
 
+            if (currentIndex === images.length - 1) {
+                drawArrow(arrow, arrowPosition);
+                drawText(storyText);
+            }
+
             if (currentTime - lastUpdateTime >= animationSpeed) {
                 lastUpdateTime = currentTime;
                 currentIndex++;
@@ -77,10 +82,7 @@ function animatePage(images, arrow, storyText) {
             lastUpdateTime = currentTime;
         }
 
-        if (currentIndex === images.length - 1) {
-            drawArrow(arrow, arrowPosition);
-            drawText(storyText);
-        }
+        
 
         
         Screen.flip();
@@ -296,8 +298,8 @@ function page11() {
     
     const storyText = 
     `Cuphead and Mugman were terribly frightened and ran away
-    as fast as they could. "C'mon, Mug!" panted Cuphead. "We have
-    to find the Elder Kettle. He'll know what to do!"`;
+as fast as they could. "C'mon, Mug!" panted Cuphead. "We have
+to find the Elder Kettle. He'll know what to do!"`;
 
     let currentIndex = 0; 
     let playingAnimation = false; 
@@ -343,6 +345,11 @@ function page11() {
             const currentImage = images[currentIndex];
             currentImage.draw(0, 0);
 
+            if (currentIndex === images.length - 1) {
+                drawArrow(arrow, arrowPosition);
+                drawText(storyText);
+            }
+
             if (currentTime - lastUpdateTime >= animationSpeed) {
                 lastUpdateTime = currentTime;
                 currentIndex++;
@@ -353,10 +360,7 @@ function page11() {
             }
         }
 
-        if (currentIndex === images.length - 1) {
-            drawArrow(arrow, arrowPosition);
-            drawText(storyText);
-        }
+        
 
         Screen.flip();
     }

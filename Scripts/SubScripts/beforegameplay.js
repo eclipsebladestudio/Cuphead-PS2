@@ -80,8 +80,13 @@ console.log("Status dos Saves: ", saveStatus);
 
 var headvelocity = 0.0009; 
 
+var fadeOutAlpha = 0;
+var fadeOutInProgress = false; 
+
 function drawInterfaceP() {
   Background.draw(0, 0);
+
+  
 
   if (interf) {
     inter.width = 328;
@@ -236,6 +241,17 @@ if (!transparent) {
       }
       scph = true;
 
+      if (fadeOutInProgress) {
+        Draw.rect(0, 0, canvas.width, canvas.height, Color.new(0, 0, 0, fadeOutAlpha));
+        if (fadeOutAlpha < 255) {
+          fadeOutAlpha += 5; 
+        } else {
+          fadeOutInProgress = false; 
+          console.log("Loading Book...");
+          System.loadELF(System.loadELF(System.boot_path + "/book.ini", ["Scripts/Subscripts/book.js"]));
+        }
+      }
+
       if (play_animation) {
         if (Timer.getTime(time_anim) >= 50 / headvelocity) { 
             Timer.setTime(time_anim, 0);
@@ -246,9 +262,8 @@ if (!transparent) {
                 if (direction_player) {
                   
                     Sound.pause(audio, audioSlot);
-                    console.log("Loading Book...");
-                
-                    System.loadELF(System.loadELF(System.boot_path + "/book.ini", ["Scripts/Subscripts/book.js"]) );
+                    fadeOutInProgress = true; 
+    fadeOutAlpha = 0;
                 }
             }
 
