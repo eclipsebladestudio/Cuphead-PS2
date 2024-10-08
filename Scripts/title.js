@@ -62,9 +62,7 @@ function delete_images() {
         transitionImages[i] = null;
     }
     
-    if (typeof std.gc === 'function') {
-        std.gc();
-    }
+    std.gc();
 }
 
 Screen.display(() => {
