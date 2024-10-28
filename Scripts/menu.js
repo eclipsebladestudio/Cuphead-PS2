@@ -1216,7 +1216,7 @@ function Credits() {
       { text: texts["gameplay_programming_title"] || "Gameplay Programming", color: Color.new(255, 0, 0) },
       { text: texts["gameplay_programming_team1"] || "Fatality", color: Color.new(255, 255, 255) },
       { text: texts["gameplay_programming_team2"] || "Devecoisas", color: Color.new(255, 255, 255) },
-      { text: texts["gameplay_programming_team1"] || "Axel", color: Color.new(255, 255, 255) },
+      { text: texts["gameplay_programming_team3"] || "Axel", color: Color.new(255, 255, 255) },
       { text: "", color: Color.new(255, 255, 255) },
       { text: texts["design_title"] || "Designer", color: Color.new(255, 0, 0) },
       { text: texts["design_name"] || "Tayklor", color: Color.new(255, 255, 255) },
