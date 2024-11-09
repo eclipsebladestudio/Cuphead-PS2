@@ -3,6 +3,8 @@ import { FadeIn, FadeOut } from "/Modules/fade.js";
 let currentPage = 1; 
 
 var intro = Sound.load("host:/Assets/Music/intro_book_music.wav");
+
+Sound.repeat(true)
 var introSlot = 5; 
 
 Sound.play(intro, introSlot);
@@ -336,8 +338,9 @@ to find the Elder Kettle. He'll know what to do!"`;
 
             if (!lastImageFade.isDrawing) {
                 Sound.pause(intro, introSlot); 
-                std.loadScript("Scripts/loading.js"); 
-                break; 
+
+                std.loadScript("Scripts/loading.js");
+                break;
             }
         } else {
 
