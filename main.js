@@ -1,7 +1,10 @@
 import { FadeIn, FadeOut } from "./Modules/fade.js";
 
 const introImage = new Image("host:/Assets/Textures/LOGO.png");
-const mdhrAnimationSpeed = 20;
+const mdhrAnimationSpeed = 34;
+
+const fadeOut = new FadeOut('screen', 2, 255, false);  
+const fadeIn = new FadeIn('screen', 0, 255, false);  
 
 const audio = Sound.load("host:/Assets/Music/logo.wav");
 const audioSlot = 0;
@@ -58,7 +61,6 @@ function showIntro() {
     } else if (phase === 1) {
         fadeOutLogo.play();
         if (!fadeOutLogo.isDrawing) {
-
             loadMdhrImages(1, 100);
             currentMdhrIndex = 0; 
             phase = 2;
@@ -74,14 +76,16 @@ function showMdhrSequence() {
 
     const currentTime = Date.now();
     if (currentTime - lastMdhrUpdateTime >= mdhrAnimationSpeed) {
-        currentMdhrIndex++;
+        
+        if (!fadeOut.isDrawing) {
+            currentMdhrIndex++;
+        }
         lastMdhrUpdateTime = currentTime;
     }
 
     if (currentMdhrIndex < mdhrImages.length) {
         mdhrImages[currentMdhrIndex].draw(0, 0);
     } else {
-        
         lastfade.play();
         phase = 3; 
     }
@@ -93,6 +97,7 @@ Screen.display(() => {
         showIntro();
     } else if (phase === 2) {
         showMdhrSequence();
+        fadeOut.play();
         updateFX2();
     } else if (phase === 3) {
         if (lastfade.isDrawing) {

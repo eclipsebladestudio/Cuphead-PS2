@@ -3,6 +3,8 @@ canvas.width = 640;
 canvas.height = 448;
 Screen.setMode(canvas);
 
+std.loadScript("Modules/fadec.js");
+const fadeOut = new FadeOut('screen', 1, 255, false);  
 
 console.log("imagesandconfigurations Loaded!!!");
 let col1 = Color.new(255, 255, 255); 
@@ -22,7 +24,7 @@ const controlsMenuImage = new Image("host:/Assets/Textures/controlsmenu.png")
 const controlsMenuImage2 = new Image("host:/Assets/Textures/controlsmenu2.png")
 
 
-const fonta = new Font("host:/Assets/Font/bold.ttf");//again, it will break the entire code
+const fonta = new Font("host:/Assets/Font/bold.ttf");
 const bold = new Font("host:/Assets/Font/bold.ttf");
 bold.scale = 0.8;
 
@@ -1470,7 +1472,7 @@ Screen.display(() => {
 
     
    
-  
+    fadeOut.play();
 
   if (FX2.length > 0) {
     const now = Date.now();

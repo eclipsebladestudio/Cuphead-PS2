@@ -1,6 +1,10 @@
 
+import { FadeIn, FadeOut } from "/Modules/fade.js";
+
 ["host:/Modules/outline.js", 
  "host:/Scripts/SubScripts/Audio.js"].forEach(script => std.loadScript(script));
+
+const fadeOut = new FadeOut('screen', 5, 255, false);  
 
 
 const background = new Image("host:/Assets/Textures/title screen/Background/bg.png");
@@ -133,6 +137,10 @@ Screen.display(() => {
     if (showText) {
         fontOutline.print(centerX, 400.0, text, 1, outlineColor);
     }
+
+
+        fadeOut.play();
+        
 
     overlayImages[overlayIndex].draw(0, 0);
 });

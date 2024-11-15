@@ -1,4 +1,4 @@
-export class Fade {
+class Fade {
   constructor(target, durationInSeconds, fadeType, maxOpacity = 255, repeat = false) {
     this.target = target;
     this.duration = durationInSeconds * 1000;
@@ -7,12 +7,12 @@ export class Fade {
     this.opacity = fadeType === 'in' ? 0 : maxOpacity;
     this.startTime = null;
     this.isDrawing = false;
-    this.hasPlayed = false;  
-    this.repeat = repeat; 
+    this.hasPlayed = false;
+    this.repeat = repeat;
   }
 
   play() {
-    if (!this.hasPlayed || this.repeat) {  
+    if (!this.hasPlayed || this.repeat) {
       if (!this.isDrawing) {
         this.isDrawing = true;
         this.startTime = Date.now();
@@ -36,27 +36,25 @@ export class Fade {
 
       if (progress >= 1) {
         this.isDrawing = false;
-        this.hasPlayed = true; 
+        this.hasPlayed = true;
       }
     }
   }
 
   reset() {
-    
     this.hasPlayed = false;
     this.isDrawing = false;
   }
 }
 
-export class FadeIn extends Fade {
+class FadeIn extends Fade {
   constructor(target, durationInSeconds, maxOpacity, repeat = false) {
     super(target, durationInSeconds, 'in', maxOpacity, repeat);
   }
 }
 
-export class FadeOut extends Fade {
+class FadeOut extends Fade {
   constructor(target, durationInSeconds, maxOpacity, repeat = false) {
     super(target, durationInSeconds, 'out', maxOpacity, repeat);
   }
 }
-
