@@ -32,13 +32,14 @@ function updateFX2() {
     }
 }
 
-while (true) {
-    const currentTime = Date.now();
-    Screen.clear();
+let startTime = Date.now();
+const reloadTime = 5000; 
 
+Screen.display(() => {
+    const currentTime = Date.now();
+  
     images[currentIndex].draw(536, 250);
 
- 
     if (currentTime - lastUpdateTime >= animationSpeed) {
         lastUpdateTime = currentTime;
         currentIndex++;
@@ -49,5 +50,7 @@ while (true) {
     }
     updateFX2();
 
-    Screen.flip();
-}
+    if (currentTime - startTime >= reloadTime) {
+        std.reload("teste.js");
+    }
+});
