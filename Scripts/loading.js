@@ -1,3 +1,5 @@
+import { FadeIn, FadeOut } from "/Modules/fade.js";
+
 const font = new Font("default");
 const imageCount = 53; 
 const imagePaths = Array.from({ length: imageCount }, (_, i) => `Assets/Textures/hourglass/${i + 1}.png`);
@@ -11,6 +13,9 @@ const FX2 = [];
 for (let i = 1; i <= 20; i++) {
     FX2.push(new Image(`host:/Assets/Textures/FX/${i}.png`));
 }
+
+const fadeOut = new FadeOut('screen', 1, 255, false);  
+const fadeIn = new FadeIn('screen', 5, 255, false);  
 
 let FX2Index = 0;
 let FX2Direction = 1;
@@ -34,6 +39,7 @@ function updateFX2() {
 
 let startTime = Date.now();
 const reloadTime = 5000; 
+const reloadTime2 = 7500; 
 
 Screen.display(() => {
     const currentTime = Date.now();
@@ -50,7 +56,13 @@ Screen.display(() => {
     }
     updateFX2();
 
+    fadeOut.play()
+
     if (currentTime - startTime >= reloadTime) {
-        std.reload("teste.js");
+        fadeIn.play()
+    }
+
+    if (currentTime - startTime >= reloadTime2) {
+        std.reload("Scripts/Subscripts/Overworld/main.js");
     }
 });
