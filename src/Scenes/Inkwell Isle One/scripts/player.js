@@ -15,23 +15,23 @@ class Player {
         
         
 
-        this.playerUpWalkImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Up', 12);
-        this.playerLeftWalkImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Left Walk', 11);
-        this.playerRightWalkImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Right Walk', 11);
-        this.playerDownWalkImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Down Walk', 13);
-        this.playerDiagonalUpRightWalkImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Diagonal UP', 10);
-        this.playerDiagonalUpLeftWalkImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Up Left', 10);
-        this.playerDiagonalDownRightWalkImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Down', 10);
-        this.playerDiagonalDownLeftWalkImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Down Left', 9);
+        this.playerUpWalkImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Up', 12);
+        this.playerLeftWalkImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Left Walk', 11);
+        this.playerRightWalkImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Right Walk', 11);
+        this.playerDownWalkImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Down Walk', 13);
+        this.playerDiagonalUpRightWalkImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Diagonal UP', 10);
+        this.playerDiagonalUpLeftWalkImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Up Left', 10);
+        this.playerDiagonalDownRightWalkImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Down', 10);
+        this.playerDiagonalDownLeftWalkImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Down Left', 9);
 
-        this.playerUpIdleImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Up/Idle', 6);
-        this.playerLeftIdleImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Left Walk/Idle', 4);
-        this.playerRightIdleImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Right Walk/Idle', 4);
-        this.playerDownIdleImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Down Walk/Idle', 8);
-        this.playerDiagonalUpRightIdleImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Diagonal UP/Idle', 4);
-        this.playerDiagonalUpLeftIdleImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Up Left/Idle', 4);
-        this.playerDiagonalDownRightIdleImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Down/Idle', 4);
-        this.playerDiagonalDownLeftIdleImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Down Left/Idle', 4);
+        this.playerUpIdleImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Up/Idle', 6);
+        this.playerLeftIdleImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Left Walk/Idle', 4);
+        this.playerRightIdleImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Right Walk/Idle', 4);
+        this.playerDownIdleImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Down Walk/Idle', 8);
+        this.playerDiagonalUpRightIdleImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Diagonal UP/Idle', 4);
+        this.playerDiagonalUpLeftIdleImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Up Left/Idle', 4);
+        this.playerDiagonalDownRightIdleImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Down/Idle', 4);
+        this.playerDiagonalDownLeftIdleImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Player/Diagonal Down Left/Idle', 4);
 
         this.currentWalkFrame = 0;
         this.walkAnimationSpeed = 50;

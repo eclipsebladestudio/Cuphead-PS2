@@ -1,11 +1,11 @@
 function loadLanguage() {
-    const jsonFile = `host:/Assets/Configuration Files/current_language.json`;
+    const jsonFile = `host:/src/Configuration Files/current_language.json`;
     try {
         const fileContent = std.open(jsonFile, "r").readAsString().trim();
         const json = JSON.parse(fileContent);
         const language = json.currentLanguage || "en"; 
 
-        const langFile = `Assets/Configuration Files/Languages/${language}.cfg`;
+        const langFile = `src/Configuration Files/Languages/${language}.cfg`;
         const langContent = std.open(langFile, "r").readAsString();
         texts = parseLanguageFile(langContent); 
 

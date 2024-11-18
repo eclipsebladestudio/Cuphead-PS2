@@ -3,7 +3,7 @@ canvas.width = 640;
 canvas.height = 448;
 Screen.setMode(canvas);
 
-std.loadScript("Assets/Modules/fadec.js");
+std.loadScript("src/Modules/fadec.js");
 const fadeOut = new FadeOut('screen', 1, 255, false);  
 
 console.log("imagesandconfigurations Loaded!!!");
@@ -15,38 +15,38 @@ const red = Color.new(255,127,80);
 const orange = Color.new(255,127,80);  
 const green = Color.new(50, 160, 50);
 const white = Color.new(255, 255, 255);
-const circle = new Image("Assets/Scenes/Menu/Textures/pads/circle.png");
-const TRIANGLE = new Image("Assets/Scenes/Menu/Textures/pads/triangle.png");
+const circle = new Image("src/Scenes/Menu/Textures/pads/circle.png");
+const TRIANGLE = new Image("src/Scenes/Menu/Textures/pads/triangle.png");
 
-const controlsMenu = new Image("Assets/Scenes/Menu/Textures/controlst.png");
+const controlsMenu = new Image("src/Scenes/Menu/Textures/controlst.png");
 
-const controlsMenuImage = new Image("host:/Assets/Scenes/Menu/Textures/controlsmenu.png")
-const controlsMenuImage2 = new Image("host:/Assets/Scenes/Menu/Textures/controlsmenu2.png")
+const controlsMenuImage = new Image("host:/src/Scenes/Menu/Textures/controlsmenu.png")
+const controlsMenuImage2 = new Image("host:/src/Scenes/Menu/Textures/controlsmenu2.png")
 
 
-const fonta = new Font("host:/Assets/Font/bold.ttf");
-const bold = new Font("host:/Assets/Font/bold.ttf");
+const fonta = new Font("host:/src/Font/bold.ttf");
+const bold = new Font("host:/src/Font/bold.ttf");
 bold.scale = 0.8;
 
-const Background = new Image("host:/Assets/Scenes/Menu/Textures/Menubg.png");
+const Background = new Image("host:/src/Scenes/Menu/Textures/Menubg.png");
 Background.width = 640;
 Background.height = 448;
 
-const select_img = new Image("host:/Assets/Scenes/Menu/Textures/select.png");
+const select_img = new Image("host:/src/Scenes/Menu/Textures/select.png");
 
 const FX2 = [];
 for (let i = 1; i <= 20; i++) {
-  FX2.push(new Image(`host:/Assets/Scenes/ScreenFX/${i}.png`));
+  FX2.push(new Image(`host:/src/Scenes/ScreenFX/${i}.png`));
 }
 
 const transitionbImages = [];
 for (let i = 1; i <= 15; i++) {
-  transitionbImages.push(new Image(`host:/Assets/Scenes/Transition/${i}.png`));
+  transitionbImages.push(new Image(`host:/src/Scenes/Transition/${i}.png`));
 }
 
-const interfaceImage = new Image("host:/Assets/Scenes/Menu/Textures/pause.png");
-const interfaceImage2 = new Image("host:/Assets/Scenes/Menu/Textures/interface.png");
-const interfaceImage3 = new Image("host:/Assets/Scenes/Menu/Textures/options.png");
+const interfaceImage = new Image("host:/src/Scenes/Menu/Textures/pause.png");
+const interfaceImage2 = new Image("host:/src/Scenes/Menu/Textures/interface.png");
+const interfaceImage3 = new Image("host:/src/Scenes/Menu/Textures/options.png");
 
 interfaceImage2.width = 328;
 interfaceImage2.height = 322;
@@ -62,9 +62,9 @@ let transitionbActive = false;
 let transitionbCompleted = false;
 let lastTransitionbUpdateTime = Date.now();
 let showBlackScreen2 = false;
-const slot = new Image("host:/Assets/Scenes/Menu/Textures/slot.png");
-const fillImage = new Image("host:/Assets/Scenes/Menu/Textures/select.png");
-const studiologo = new Image("host:/Assets/Scenes/Menu/Textures/studiologo.png")
+const slot = new Image("host:/src/Scenes/Menu/Textures/slot.png");
+const fillImage = new Image("host:/src/Scenes/Menu/Textures/select.png");
+const studiologo = new Image("host:/src/Scenes/Menu/Textures/studiologo.png")
 
 
 let pad = Pads.get();
@@ -73,11 +73,11 @@ let stop = false;
 let showSelectText = false;
 
 const loadScript = (scriptName) => {
-  const baseDir = "host:/Assets/Scripts/SubScripts/";
+  const baseDir = "host:/src/Scripts/SubScripts/";
   std.loadScript(`${baseDir}${scriptName}.js`);
 };
 
-const cross = new Image("Assets/Scenes/Menu/Textures/pads/Cross.png");
+const cross = new Image("src/Scenes/Menu/Textures/pads/Cross.png");
 
 const scripts = [
   "config",
@@ -135,9 +135,9 @@ console.log("menuandsubmenu Loaded!!!");
 
 console.log("beforegameplay Loaded!!!");
 console.log("Teste 1");
-var bold2 = new Font("Assets/Font/bold.ttf");
-var bold3 = new Font("Assets/Font/bold.ttf");
-var text_new = new Font("Assets/Font/bold.ttf");
+var bold2 = new Font("src/Font/bold.ttf");
+var bold3 = new Font("src/Font/bold.ttf");
+var text_new = new Font("src/Font/bold.ttf");
 var text_player = new Font("default");
 text_player.scale = 0.6;
 text_new.color = Color.new(29,29,29);
@@ -145,7 +145,7 @@ text_new.scale = 0.8;
 
 console.log("Teste 2");
 var isInInterfaceP = false;
-var inter = new Image("Assets/Scenes/Menu/Textures/interface.png");
+var inter = new Image("src/Scenes/Menu/Textures/interface.png");
 console.log("Teste 3");
 var zz = text_new.getTextSize("NEW");
 var centerx = 173 + (294 - zz.width) / 2;
@@ -164,10 +164,10 @@ var scph = false;
 console.log("Teste 5");
 function loadImgHead() {
   for (var z = 1; z < 9; z++) {
-    frames_head_player1.push(new Image("Assets/Scenes/Menu/Textures/players/cuphead/HEAD_MENU/" + z + ".png"));
+    frames_head_player1.push(new Image("src/Scenes/Menu/Textures/players/cuphead/HEAD_MENU/" + z + ".png"));
   }
   for (var p = 1; p < 9; p++) {
-    frames_head_player2.push(new Image("Assets/Scenes/Menu/Textures/players/mugman/HEAD_MENU/" + p + ".png"));
+    frames_head_player2.push(new Image("src/Scenes/Menu/Textures/players/mugman/HEAD_MENU/" + p + ".png"));
   }
 }
 
@@ -382,7 +382,7 @@ if (!transparent) {
         } else {
           fadeOutInProgress = false; 
           console.log("Loading Book...");
-          System.loadELF(System.loadELF(System.boot_path + "/book.ini", ["Assets/Scenes/StoryBook/book.js"]));
+          System.loadELF(System.loadELF(System.boot_path + "/book.ini", ["src/Scenes/StoryBook/book.js"]));
         }
       }
 
@@ -752,10 +752,10 @@ const boxHeightOptions = 18;
 const textPadding = -10;
 const boxSpacing = 5;
 
-const fonta3 = new Font("host:/Assets/Font/ep.otf");
-const fonta2 = new Font("host:/Assets/Font/ep2.otf");
-const fonta5 = new Font("host:/Assets/Font/controls.otf");
-const fonta4 = new Font("host:/Assets/Font/ep.otf");
+const fonta3 = new Font("host:/src/Font/ep.otf");
+const fonta2 = new Font("host:/src/Font/ep2.otf");
+const fonta5 = new Font("host:/src/Font/controls.otf");
+const fonta4 = new Font("host:/src/Font/ep.otf");
 
 fonta5.scale = 0.5;
 fonta3.scale = 0.5;
@@ -1163,13 +1163,13 @@ function drawSubmenuOption(textKey, y, isSelected) {
 function Credits() {
   
   var gray = Color.new(11, 11, 11, 255);
-  var logoebd = new Image("host:/Assets/Scenes/Menu/Textures/eclipse_credits_final.png");
-  var fant = new Font("host:/Assets/Font/bold.ttf");
+  var logoebd = new Image("host:/src/Scenes/Menu/Textures/eclipse_credits_final.png");
+  var fant = new Font("host:/src/Font/bold.ttf");
   fant.scale = 1;
 
   var fx3 = [];
   for (let i = 1; i <= 10; i++) {
-      fx3.push(new Image(`host:/Assets/Scenes/ScreenFX/${i}.png`));
+      fx3.push(new Image(`host:/src/Scenes/ScreenFX/${i}.png`));
   }
   let fx3Index = 0;
   let fx3Direction = 1;
@@ -1288,7 +1288,7 @@ function Credits() {
           logoebd.draw(canvas.width / 2 - logoebd.width / 2, canvas.height / 2 - logoebd.height / 2);
 
           if (Date.now() - logoStartTime >= logoDuration) {
-            System.loadELF(System.loadELF(System.boot_path + "/athena.elf", ["Assets/Scripts/Subscripts/book.js"]) );
+            System.loadELF(System.loadELF(System.boot_path + "/athena.elf", ["src/Scripts/Subscripts/book.js"]) );
           }
       }
 

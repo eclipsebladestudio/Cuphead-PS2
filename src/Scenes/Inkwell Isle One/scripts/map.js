@@ -1,5 +1,5 @@
 import Player from './player.js';
-import { FadeIn, FadeOut } from "/Assets/Modules/fade.js";
+import { FadeIn, FadeOut } from "/src/Modules/fade.js";
 
 
 
@@ -8,7 +8,7 @@ class Map {
         this.screenWidth = 640;
         this.screenHeight = 480;
 
-        const audio = Sound.load("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Audio/One.ogg")
+        const audio = Sound.load("src/Scenes/Inkwell Isle One/Overworld/Stage/Audio/One.ogg")
         const audioSlot = 0;
         this.fadeOut = new FadeOut('screen', 1, 255, false);  
 
@@ -19,38 +19,38 @@ class Map {
         this.cameraY = 0;
         
 
-        this.mapImage = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Map1.png");
-        this.map2 = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Map2.png");
-        this.Map2S = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Map2second.png");
-        this.bridge = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Map content/bridge1.png");
-        this.stairsveggie = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Map content/stairs veggies.png");
-        this.lighthouseImage = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Map content/lighthouse.png");
-        this.piecesImage = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Map content/pieces1.png");
-        this.icon = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/coin.png");
-        this.boat = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Boat/world1_boat.png");
-        this.dock = new Image("Assets/Scenes/Inkwell Isle One/Overworld/Stage/Boat/world1_dock.png");
+        this.mapImage = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Map1.png");
+        this.map2 = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Map2.png");
+        this.Map2S = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Map2second.png");
+        this.bridge = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Map content/bridge1.png");
+        this.stairsveggie = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Map content/stairs veggies.png");
+        this.lighthouseImage = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Map content/lighthouse.png");
+        this.piecesImage = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Map content/pieces1.png");
+        this.icon = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/coin.png");
+        this.boat = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Boat/world1_boat.png");
+        this.dock = new Image("src/Scenes/Inkwell Isle One/Overworld/Stage/Boat/world1_dock.png");
 
-        this.npcAnimationImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Stage/Npc', 8);
+        this.npcAnimationImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Stage/Npc', 8);
         this.npcCurrentFrame = 0;
         this.npcAnimationSpeed = 100;
         this.npcLastFrameTime = Date.now();
 
-        this.slimeAnimationImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Stage/Icon Slime/', 3);
+        this.slimeAnimationImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Stage/Icon Slime/', 3);
         this.slimeCurrentFrame = 0;
         this.slimeAnimationSpeed = 100;
         this.slimeLastFrameTime = Date.now();
 
-        this.houseAnimationImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Stage/Tutorial', 3);
+        this.houseAnimationImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Stage/Tutorial', 3);
         this.houseCurrentFrame = 0;
         this.houseAnimationSpeed = 100;
         this.houseLastFrameTime = Date.now();
 
-        this.shopAnimationImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Stage/Shop/', 3);
+        this.shopAnimationImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Stage/Shop/', 3);
         this.shopCurrentFrame = 0;
         this.shopAnimationSpeed = 100;
         this.shopLastFrameTime = Date.now();
 
-        this.veggiesAnimationImages = this.loadImages('Assets/Scenes/Inkwell Isle One/Overworld/Stage/Veggies/', 3);
+        this.veggiesAnimationImages = this.loadImages('src/Scenes/Inkwell Isle One/Overworld/Stage/Veggies/', 3);
 
         this.veggiesCurrentFrame = 0;
         this.veggiesAnimationSpeed = 100;
@@ -77,7 +77,7 @@ class Map {
         this.Map2S.width = 408;
         this.Map2S.height = 657;
     
-        this.fontDefault = new Font("Assets/font/cupiredi.otf");
+        this.fontDefault = new Font("src/font/cupiredi.otf");
         this.fontDefault.scale = Math.fround(1);
         this.fontDefault.color = Color.new(139,0,0);
 

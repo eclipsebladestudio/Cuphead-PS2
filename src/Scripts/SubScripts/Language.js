@@ -3,13 +3,13 @@ let languages = [];
 let currentLanguageIndex = 0;
 
 function loadAvailableLanguages() {
-    const languageFile = "host:/Assets/Configuration Files/languagesavaible.cfg";
+    const languageFile = "host:/src/Configuration Files/languagesavaible.cfg";
     const fileContent = std.open(languageFile, "r").readAsString().trim();
     languages = fileContent.split(',');
 }
 
 function loadLanguage(language) {
-    const languagePath = `host:/Assets/Configuration Files/Languages/${language}.cfg`;
+    const languagePath = `host:/src/Configuration Files/Languages/${language}.cfg`;
     const languageFileContent = std.open(languagePath, "r").readAsString();
     const lines = languageFileContent.split('\n');
 
@@ -33,7 +33,7 @@ function loadLanguage(language) {
     }
 
     function saveCurrentLanguageToJson(language) {
-      const jsonFile = "host:/Assets/Configuration Files/current_language.json";
+      const jsonFile = "host:/src/Configuration Files/current_language.json";
       const content = JSON.stringify({ currentLanguage: language });
     
       function stringToArrayBuffer(str) {
@@ -62,7 +62,7 @@ function loadLanguage(language) {
 }
 
 function initializeLanguage() {
-    const jsonFile = "host:/Assets/Configuration Files/current_language.json";
+    const jsonFile = "host:/src/Configuration Files/current_language.json";
     try {
         const fileContent = std.open(jsonFile, "r").readAsString().trim();
         const json = JSON.parse(fileContent);

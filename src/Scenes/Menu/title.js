@@ -1,24 +1,24 @@
 
-import { FadeIn, FadeOut } from "/Assets/Modules/fade.js";
+import { FadeIn, FadeOut } from "/src/Modules/fade.js";
 
-["host:/Assets/Modules/outline.js", 
- "host:/Assets/Scripts/SubScripts/Audio.js"].forEach(script => std.loadScript(script));
+["host:/src/Modules/outline.js", 
+ "host:/src/Scripts/SubScripts/Audio.js"].forEach(script => std.loadScript(script));
 
 const fadeOut = new FadeOut('screen', 5, 255, false);  
 
 
-const background = new Image("host:/Assets/Scenes/Menu/Textures/title screen/Background/bg.png");
-const images = Array.from({ length: 22 }, (_, i) => new Image(`host:/Assets/Scenes/Menu/Textures/title screen/Cuphead and Mugman/${i + 1}.png`));
+const background = new Image("host:/src/Scenes/Menu/Textures/title screen/Background/bg.png");
+const images = Array.from({ length: 22 }, (_, i) => new Image(`host:/src/Scenes/Menu/Textures/title screen/Cuphead and Mugman/${i + 1}.png`));
 
-const font = new Font("host:/Assets/Font/bold.ttf");
+const font = new Font("host:/src/Font/bold.ttf");
 const fontOutline = new FontOutline(font);
 font.scale = 0.8;
 font.color = Color.new(255, 255, 0);
 
 const outlineColor = Color.new(0, 0, 0, 200);
 
-const overlayImages = Array.from({ length: 20 }, (_, i) => new Image(`host:/Assets/Scenes/ScreenFX/${i + 1}.png`));
-const transitionImages = Array.from({ length: 15 }, (_, i) => new Image(`host:/Assets/Scenes/Transition/${i + 1}.png`));
+const overlayImages = Array.from({ length: 20 }, (_, i) => new Image(`host:/src/Scenes/ScreenFX/${i + 1}.png`));
+const transitionImages = Array.from({ length: 15 }, (_, i) => new Image(`host:/src/Scenes/Transition/${i + 1}.png`));
 
 Sound.play(audio, audioSlot);
 Sound.repeat(true, audioSlot);
@@ -50,7 +50,7 @@ let lastUpdateTime = now;
 let lastOverlayUpdateTime = now;
 let lastTransitionUpdateTime = now;
 
-std.loadScript("host:/Assets/Scripts/SubScripts/Languageforscripts.js");
+std.loadScript("host:/src/Scripts/SubScripts/Languageforscripts.js");
 
 
 function delete_images() {
@@ -117,7 +117,7 @@ Screen.display(() => {
 
     if (showBlackScreen) {
         delete_images();
-        std.loadScript("host:/Assets/Scenes/Menu/menu.js");
+        std.loadScript("host:/src/Scenes/Menu/menu.js");
         return;
     }
 

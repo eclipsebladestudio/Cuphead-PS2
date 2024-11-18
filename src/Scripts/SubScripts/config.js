@@ -1,7 +1,7 @@
 console.log("config Loaded!!!");
 
 function loadConfig() {
-  const iniFile = 'host:/Assets/Configuration Files/config.ini';
+  const iniFile = 'host:/src/Configuration Files/config.ini';
   try {
     const file = std.open(iniFile, 'r');
     const fileContent = file.readAsString();
@@ -57,7 +57,7 @@ function parseIni(iniString) {
 const config = loadConfig();
 
 function saveConfig() {
-  const iniFile = "host:/Assets/Configuration Files/config.ini";
+  const iniFile = "host:/src/Configuration Files/config.ini";
   const content = formatIni(config);
 
   function stringToArrayBuffer(str) {
@@ -122,7 +122,7 @@ function adjustVolume(option, change) {
 }
 
 function loadButtonConfigs() {
-  const iniFile = 'host:/Assets/Configuration Files/config.ini';
+  const iniFile = 'host:/src/Configuration Files/config.ini';
   try {
       const file = std.open(iniFile, 'r');
       const fileContent = file.readAsString();
@@ -136,7 +136,7 @@ function loadButtonConfigs() {
 }
 
 function saveButtonConfigs() {
-  const iniFile = 'host:/Assets/Configuration Files/config.ini';
+  const iniFile = 'host:/src/Configuration Files/config.ini';
   const content = stringifyIniFile(buttonConfigs);
 
   function stringToArrayBuffer(str) {

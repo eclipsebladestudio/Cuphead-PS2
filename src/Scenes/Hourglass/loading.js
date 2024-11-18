@@ -1,8 +1,8 @@
-import { FadeIn, FadeOut } from "/Assets/Modules/fade.js";
+import { FadeIn, FadeOut } from "/src/Modules/fade.js";
 
 const font = new Font("default");
 const imageCount = 53; 
-const imagePaths = Array.from({ length: imageCount }, (_, i) => `Assets/Scenes/Hourglass/Animation/${i + 1}.png`);
+const imagePaths = Array.from({ length: imageCount }, (_, i) => `src/Scenes/Hourglass/Animation/${i + 1}.png`);
 const images = imagePaths.map(path => new Image(path));
 
 let currentIndex = 0; 
@@ -11,7 +11,7 @@ let lastUpdateTime = Date.now();
 
 const FX2 = [];
 for (let i = 1; i <= 20; i++) {
-    FX2.push(new Image(`host:/Assets/Scenes/ScreenFX/${i}.png`));
+    FX2.push(new Image(`host:/src/Scenes/ScreenFX/${i}.png`));
 }
 
 const fadeOut = new FadeOut('screen', 1, 255, false);  
@@ -63,6 +63,6 @@ Screen.display(() => {
     }
 
     if (currentTime - startTime >= reloadTime2) {
-        std.reload("Assets/Scenes/Inkwell Isle One/main.js");
+        std.reload("src/Scenes/Inkwell Isle One/main.js");
     }
 });

@@ -1,10 +1,10 @@
 console.log("Audio Loaded!!!");
-var audio = Sound.load("host:/Assets/Music/screen.wav");
+var audio = Sound.load("host:/src/Music/screen.wav");
 var audioSlot = 0;
 
-var audio2 = Sound.load("host:/Assets/Sounds/select.adp");
+var audio2 = Sound.load("host:/src/Sounds/select.adp");
 
-var credit = Sound.load("host:/Assets/Music/credits_music.wav");
+var credit = Sound.load("host:/src/Music/credits_music.wav");
 
 var audioSlot3 = 2; 
 var audioSlot2 = 1;
