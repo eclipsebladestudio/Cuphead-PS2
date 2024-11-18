@@ -1,6 +1,6 @@
-import { FadeIn, FadeOut } from "./Modules/fade.js";
+import { FadeIn, FadeOut } from "./Assets/Modules/fade.js";
 
-const introImage = new Image("host:/Assets/Textures/LOGO.png");
+const introImage = new Image("host:/Assets/Logo/LOGOt.png");
 const mdhrAnimationSpeed = 34;
 
 const fadeOut = new FadeOut('screen', 2, 255, false);  
@@ -20,10 +20,10 @@ const fadeOutLogo = new FadeOut(introImage, 4, 85);
 
 const FX2 = [];
 for (let i = 1; i <= 20; i++) {
-    FX2.push(new Image(`host:/Assets/Textures/FX/${i}.png`));
+    FX2.push(new Image(`host:/Assets/Scenes/ScreenFX/${i}.png`));
 }
 
-const last = new Image("host:/Assets/Textures/MDHR/100.png");
+const last = new Image("host:/Assets/Scenes/MDHR/100.png");
 const lastfade = new FadeOut(last, 4, 100); 
 
 let FX2Index = 0;
@@ -33,7 +33,7 @@ const FX2AnimationSpeed = 40;
 
 function loadMdhrImages(start, end) {
     mdhrImages = Array.from({ length: end - start + 1 }, (_, i) => 
-        new Image(`host:/Assets/Textures/MDHR/${start + i}.png`)
+        new Image(`host:/Assets/Scenes/MDHR/${start + i}.png`)
     );
 }
 
@@ -104,7 +104,7 @@ Screen.display(() => {
             lastfade.play();
         } else {
             Sound.pause(audio, audioSlot);
-            std.reload("host:/Scripts/title.js"); 
+            std.reload("host:/Assets/Scenes/Menu/title.js"); 
         }
     }
 });

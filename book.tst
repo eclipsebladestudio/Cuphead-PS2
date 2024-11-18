@@ -1,3 +1,3 @@
 boot_logo = false
 dark_mode = false
-default_script = "Scripts/Subscripts/book.js"
+default_script = "Assets/Scenes/StoryBook/book.js"
