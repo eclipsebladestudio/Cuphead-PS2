@@ -2,7 +2,7 @@
 import { FadeIn, FadeOut } from "/src/Modules/fade.js";
 
 ["host:/src/Modules/outline.js", 
- "host:/src/Scripts/SubScripts/Audio.js"].forEach(script => std.loadScript(script));
+ "host:/src/Configuration Files/Audio.js"].forEach(script => std.loadScript(script));
 
 const fadeOut = new FadeOut('screen', 5, 255, false);  
 
@@ -50,7 +50,7 @@ let lastUpdateTime = now;
 let lastOverlayUpdateTime = now;
 let lastTransitionUpdateTime = now;
 
-std.loadScript("host:/src/Scripts/SubScripts/Languageforscripts.js");
+std.loadScript("host:/src/Configuration Files/Languageforscripts.js");
 
 
 function delete_images() {

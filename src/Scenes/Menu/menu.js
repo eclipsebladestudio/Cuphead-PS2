@@ -73,7 +73,7 @@ let stop = false;
 let showSelectText = false;
 
 const loadScript = (scriptName) => {
-  const baseDir = "host:/src/Scripts/SubScripts/";
+  const baseDir = "host:/src/Configuration Files/";
   std.loadScript(`${baseDir}${scriptName}.js`);
 };
 
@@ -189,9 +189,9 @@ function loadFrameHead2(frame, width, height, x, y) {
 
 function checkSaveFiles() {
   var saveFiles = [
-      "Saves/cuphead_player_data_v1_slot_0.sav",
-      "Saves/cuphead_player_data_v1_slot_1.sav",
-      "Saves/cuphead_player_data_v1_slot_2.sav",
+      "src/Saves/cuphead_player_data_v1_slot_0.sav",
+      "src/Saves/cuphead_player_data_v1_slot_1.sav",
+      "src/Saves/cuphead_player_data_v1_slot_2.sav",
   ];
 
   var foundSave = [false, false, false]; 
@@ -1288,7 +1288,7 @@ function Credits() {
           logoebd.draw(canvas.width / 2 - logoebd.width / 2, canvas.height / 2 - logoebd.height / 2);
 
           if (Date.now() - logoStartTime >= logoDuration) {
-            System.loadELF(System.loadELF(System.boot_path + "/athena.elf", ["src/Scripts/Subscripts/book.js"]) );
+           
           }
       }
 
