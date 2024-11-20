@@ -171,19 +171,29 @@ function loadImgHead() {
   }
 }
 
+var shakeIntensity = 0.3; 
+
 function loadFrameHead(frame, width, height, x, y) {
+
+  var shakeX = Math.random() * shakeIntensity - shakeIntensity / 3;
+  var shakeY = Math.random() * shakeIntensity - shakeIntensity / 2;
+
   if (frames_head_player1[frame] && frames_head_player1[frame].ready()) {
     frames_head_player1[frame].width = width;
     frames_head_player1[frame].height = height;
-    frames_head_player1[frame].draw(x, y);
+    frames_head_player1[frame].draw(x + shakeX, y + shakeY);
   }
 }
 
 function loadFrameHead2(frame, width, height, x, y) {
+
+  var shakeX = Math.random() * shakeIntensity - shakeIntensity / 2;
+  var shakeY = Math.random() * shakeIntensity - shakeIntensity / 2;
+
   if (frames_head_player2[frame] && frames_head_player2[frame].ready()) {
     frames_head_player2[frame].width = width;
     frames_head_player2[frame].height = height;
-    frames_head_player2[frame].draw(x, y);
+    frames_head_player2[frame].draw(x + shakeX, y + shakeY); 
   }
 }
 
@@ -216,6 +226,10 @@ var headvelocity = 0.0009;
 
 var fadeOutAlpha = 0;
 var fadeOutInProgress = false; 
+
+var currentAlpha = 0; 
+var fadeTargetAlpha = 100; 
+var fadeSpeed = 8;
 
 function drawInterfaceP() {
   Background.draw(0, 0);
@@ -281,6 +295,20 @@ for (var i = 0; i < 3; i++) {
     }
 }
 
+function fadeOutRect() {
+
+  Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, currentAlpha));
+
+  if (currentAlpha < fadeTargetAlpha) {
+    currentAlpha += fadeSpeed;
+
+    if (currentAlpha > fadeTargetAlpha) {
+      currentAlpha = fadeTargetAlpha;
+    }
+  } 
+}
+
+
 if (!transparent) {
     switch (option_save) {
         case 1:
@@ -325,8 +353,21 @@ if (!transparent) {
       scph = false;
     }
 
+    if (pad.justPressed(Pads.TRIANGLE) && transparent) {
+      playSoundSelect();
+      transparent = false;
+      currentAlpha = 0; 
+      fadeOutAlpha = 0; 
+      
+      stop = false;  
+      interf = true;  
+
+    }
+    
+    
+
     if (transparent) {
-      Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, 85));
+      fadeOutRect();
       select_img.width = 296;
       select_img.height = 75;
 

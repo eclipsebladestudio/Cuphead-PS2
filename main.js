@@ -15,13 +15,12 @@ let lastMdhrUpdateTime = 0;
 let phase = 0; 
 let audioPlayed = false;
 
+let FX2 = [];
+
 const fadeInLogo = new FadeIn(introImage, 3, 85); 
 const fadeOutLogo = new FadeOut(introImage, 4, 85); 
 
-const FX2 = [];
-for (let i = 1; i <= 20; i++) {
-    FX2.push(new Image(`host:/src/Scenes/ScreenFX/${i}.png`));
-}
+
 
 const last = new Image("host:/src/Scenes/MDHR/100.png");
 const lastfade = new FadeOut(last, 4, 100); 
@@ -31,11 +30,29 @@ let FX2Direction = 1;
 let lastFX2UpdateTime = Date.now();
 const FX2AnimationSpeed = 40;
 
-function loadMdhrImages(start, end) {
-    mdhrImages = Array.from({ length: end - start + 1 }, (_, i) => 
-        new Image(`host:/src/Scenes/MDHR/${start + i}.png`)
-    );
+
+function loadImages(path) {
+    const animations = [];
+    System.listDir(path).forEach(file => {
+  
+        if (file.name.endsWith('.png')) {
+            animations.push(file.name); 
+        }
+    });
+
+    animations.sort((a, b) => {
+   
+        const numA = parseInt(a.replace('.png', ''));
+        const numB = parseInt(b.replace('.png', ''));
+        return numA - numB; 
+    });
+ 
+    const loadedImages = animations.map(fileName => new Image(path + "/" + fileName));
+    return loadedImages;
 }
+
+mdhrImages = loadImages("host:/src/Scenes/MDHR");
+FX2 = loadImages("host:/src/Scenes/ScreenFX");
 
 function updateFX2() {
     if (FX2.length > 0) {
@@ -61,7 +78,6 @@ function showIntro() {
     } else if (phase === 1) {
         fadeOutLogo.play();
         if (!fadeOutLogo.isDrawing) {
-            loadMdhrImages(1, 100);
             currentMdhrIndex = 0; 
             phase = 2;
         }
@@ -107,4 +123,4 @@ Screen.display(() => {
             std.reload("host:/src/Scenes/Menu/title.js"); 
         }
     }
-});
+});  
