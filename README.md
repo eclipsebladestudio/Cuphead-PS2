@@ -7,6 +7,8 @@
 
 Hello! 👋 This is a project by our team, **Eclipse Blade Studio**, where we are recreating **Cuphead** for the **PlayStation 2**! We are using the **AthenaENV engine**, and before we continue, we'd like to give a big thanks to [DanielSant0s](https://github.com/DanielSant0s) for creating this amazing engine and all the improvements made! 🙌
 
+💥 **See the progress:** [Progress](https://www.canva.com/design/DAGSv92U28M/ydYXpb5NwzYaBUIV4kkPfg/view)
+
 🌐 **Our website:** [Eclipse Blade Studio](https://www.eclipsebladestudio.com.br)  
 💬 **Join our Discord server:** [Click here to join](https://discord.gg/DCWj9KHKh4)
 
