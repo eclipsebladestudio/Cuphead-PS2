@@ -1,4 +1,4 @@
-import { setSceneToLoad } from "../../../env.js";
+import { setSceneToLoad } from "../../../SceneManager.js";
 import { FadeIn, FadeOut } from "/src/Modules/fade.js";
 
 let currentPage = 1;
@@ -169,7 +169,7 @@ let currentUpdater = null;
 Screen.display(() => {
 
     if (currentPage > 11) {
-        setSceneToLoad("Inkwell Isle One/main.js")
+        setSceneToLoad("Elder Kettle/main.js")
         std.reload("src/Scenes/Hourglass/loading.js");
     }
 
