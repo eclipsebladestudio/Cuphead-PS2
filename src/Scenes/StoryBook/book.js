@@ -1,4 +1,4 @@
-import { setSceneToLoad } from "env.js";
+import { setSceneToLoad } from "SceneManager.js";
 import { FadeIn, FadeOut } from "/src/Modules/fade.js";
 
 let currentPage = 1;

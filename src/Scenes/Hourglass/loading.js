@@ -1,4 +1,4 @@
-import { getSceneToLoad } from "../../../env.js";
+import { getSceneToLoad } from "../../../SceneManager.js";
 import { FadeIn, FadeOut } from "/src/Modules/fade.js";
 
 const font = new Font("default");
