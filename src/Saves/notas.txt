@@ -1,0 +1,4 @@
+Archivos de guarado originales del Cuphead para PC.
+Puedes transferir tus archivos de guardado de PC a este fangame y viceversa: todo el progreso que hayas hecho en este fangame será reconocido por el juego original.
+
+Si alguno de los archivos de guardado se corrompe, copia los que están bien y borra la carpeta de guardado, abre el juego y selecciona salir (desde el menú!) y mueve los que están bien de nuevo a la carpeta de guardado.
