@@ -1,4 +1,4 @@
-import { getSceneToLoad } from "../../../SceneManager.js";
+import { getSceneToLoad } from "../../../sceneManager.js";
 import { FadeIn, FadeOut } from "/src/Modules/fade.js";
 
 const font = new Font("default");
@@ -15,8 +15,8 @@ for (let i = 1; i <= 20; i++) {
     FX2.push(new Image(`host:/src/Scenes/ScreenFX/${i}.png`));
 }
 
-const fadeOut = new FadeOut('screen', 1, 255, false);  
-const fadeIn = new FadeIn('screen', 5, 255, false);  
+const fadeOut = new FadeOut("screen", 1, 255, false);  
+const fadeIn = new FadeIn("screen", 5, 255, false);  
 
 let FX2Index = 0;
 let FX2Direction = 1;
