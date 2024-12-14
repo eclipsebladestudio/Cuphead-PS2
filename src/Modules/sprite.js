@@ -17,6 +17,8 @@ export class Sprite {
 
   images = [];
 
+  inLastFrame = false;
+
   constructor(spritesheetPath, x, y, jumpers, reverse) {
 
     this.x = x;
@@ -59,23 +61,29 @@ export class Sprite {
 
     this.currentFrame += this.inReverse ? -1 : 1;
         
-    if (this.currentFrame > this.frames) {
+    if (this.currentFrame == this.frames) {
+      this.inLastFrame = true
+    }
+    else if (this.currentFrame > this.frames) {
 
-        if (!this.reverse) {
+      if (!this.reverse) {
 
-            this.currentFrame = 1;
-        }
-        else {
+        this.currentFrame = 1;
+      }
+      else {
 
-          this.inReverse = true;
-          this.currentFrame = this.frames;
-        }
-
+        this.inReverse = true;
+        this.currentFrame = this.frames;
+      }
     }
     else if (this.currentFrame < 1) {
 
-        this.inReverse = false;
-        this.currentFrame++;
+      this.inReverse = false;
+      this.currentFrame++;
+    }
+    else {
+
+      this.inLastFrame = false
     }
         
   }
