@@ -82,6 +82,11 @@ export class Entity {
     }
   }
 
+  isLastFrame() {
+
+    return this.currentAnimationFrame.inLastFrame == undefined ? false : this.currentAnimationFrame.inLastFrame
+  }
+
   draw(camera) {
 
     const isColliding = this.isColliding(this, { x: camera.x, y: camera.y, w: 640, h: 448});
