@@ -10,7 +10,6 @@ const DASH_SPEED = 11;
 const PLAYER_ANIMATIONS = [
   {name: "IDLE", spritesheetPath: "Player/sheet1.png", jumpers: [{ imagesLength: 5, imageOffsetX: 0, imageOffsetY: 412, widthPerImage: 54, heightPerImage: 82}], reverse: true},
   {name: "RUN", spritesheetPath: "Player/sheet3.png", jumpers: [{ imagesLength: 7, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 70, heightPerImage: 88, offsetX: -5, offsetY: -3},{ imagesLength: 7, imageOffsetX: 0, imageOffsetY: 88, widthPerImage: 70, heightPerImage: 88, offsetX: -5, offsetY: -3},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 176, widthPerImage: 70, heightPerImage: 88, offsetX: -5, offsetY: -3},], reverse: false},
-
   {name: "RUN_SHOOT_STRAIGHT", spritesheetPath: "Player/sheet11.png",jumpers: [{ imagesLength: 6, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4}, { imagesLength: 6, imageOffsetX: 0, imageOffsetY: 88, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4}, { imagesLength: 4, imageOffsetX: 0, imageOffsetY: 176, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4},],reverse: false},
   {name: "RUN_SHOOT_DIAGONAL_UP", spritesheetPath: "Player/sheet4.png",jumpers: [{ imagesLength: 6, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 76, heightPerImage: 88, offsetY: -4, offsetX: -5},{ imagesLength: 6, imageOffsetX: 0, imageOffsetY: 88, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 176, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4},],reverse: false},
   {name: "DUCK", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 5, imageOffsetX: 0, imageOffsetY: 128, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},],reverse: true},
@@ -143,6 +142,11 @@ export class StandingPlayer extends Player {
   runShootStraight(PAD) {
     this.entity.currentAnimation = this.entity.RUN_SHOOT_STRAIGHT;
     this.flipX = PAD.btns & Pads.LEFT ? true : false;
+
+    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
+      this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
+    }
+
     this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
 
     if (this.shootDelay.get() >= 250) {
@@ -198,7 +202,7 @@ export class StandingPlayer extends Player {
         this.isRunning = true;
       }
 
-      if (PAD.btns & Pads.DOWN || PAD.btns & PAD.ly > HALF_ANALOGIC) {
+      if (PAD.btns & Pads.DOWN || PAD.ly > HALF_ANALOGIC) {
         if (!this.startingDucking && !this.isDucking) {
           this.startingDucking = true;
         }
@@ -217,11 +221,11 @@ export class StandingPlayer extends Player {
       else if ((PAD.btns & Pads.UP) && this.isRunning && this.isShooting) {
         this.runShootDiagonalUp(PAD);
       }
+      else if (this.isRunning && !this.isShooting) {
+        this.run(PAD);
+      }
       else if (this.isRunning && this.isShooting) {
         this.runShootStraight(PAD);
-      }
-      else if (this.isRunning) {
-        this.run(PAD);
       }
       else {
         this.idle(PAD);
