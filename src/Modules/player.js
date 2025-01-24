@@ -146,7 +146,7 @@ export class StandingPlayer extends Player {
     if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
       this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
     }
-    
+
     this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
 
     if (this.shootDelay.get() >= 250) {
@@ -221,11 +221,11 @@ export class StandingPlayer extends Player {
       else if ((PAD.btns & Pads.UP) && this.isRunning && this.isShooting) {
         this.runShootDiagonalUp(PAD);
       }
+      else if (this.isRunning && !this.isShooting) {
+        this.run(PAD);
+      }
       else if (this.isRunning && this.isShooting) {
         this.runShootStraight(PAD);
-      }
-      else if (this.isRunning) {
-        this.run(PAD);
       }
       else {
         this.idle(PAD);
