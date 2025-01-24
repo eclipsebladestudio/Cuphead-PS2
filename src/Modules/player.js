@@ -202,7 +202,7 @@ export class StandingPlayer extends Player {
         this.isRunning = true;
       }
 
-      if (PAD.btns & Pads.DOWN || PAD.btns & PAD.ly > HALF_ANALOGIC) {
+      if (PAD.btns & Pads.DOWN || PAD.ly > HALF_ANALOGIC) {
         if (!this.startingDucking && !this.isDucking) {
           this.startingDucking = true;
         }
