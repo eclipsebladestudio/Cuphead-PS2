@@ -8,6 +8,7 @@ const RUN_SPEED = 3.5;
 const DASH_SPEED = 11;
 
 const PLAYER_ANIMATIONS = [
+  {name: "INTRO", spritesheetPath: "player/intro.png", jumpers: [{imagesLength: 6, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 78, heightPerImage: 84,}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 84, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 168, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 252, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 4, imageOffsetX: 0, imageOffsetY: 336, widthPerImage: 78, heightPerImage: 84}], reverse: false},
   {name: "IDLE", spritesheetPath: "Player/sheet1.png", jumpers: [{ imagesLength: 5, imageOffsetX: 0, imageOffsetY: 412, widthPerImage: 54, heightPerImage: 82}], reverse: true},
   {name: "RUN", spritesheetPath: "Player/sheet3.png", jumpers: [{ imagesLength: 7, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 70, heightPerImage: 88, offsetX: -5, offsetY: -3},{ imagesLength: 7, imageOffsetX: 0, imageOffsetY: 88, widthPerImage: 70, heightPerImage: 88, offsetX: -5, offsetY: -3},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 176, widthPerImage: 70, heightPerImage: 88, offsetX: -5, offsetY: -3},], reverse: false},
   {name: "RUN_SHOOT_STRAIGHT", spritesheetPath: "Player/sheet11.png",jumpers: [{ imagesLength: 6, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4}, { imagesLength: 6, imageOffsetX: 0, imageOffsetY: 88, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4}, { imagesLength: 4, imageOffsetX: 0, imageOffsetY: 176, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4},],reverse: false},
@@ -56,7 +57,10 @@ export class StandingPlayer extends Player {
 
     this.duckTurningTimer.pause();
 
-    this.entity.setAnimations(["IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING"]);
+    this.introTimer = new Timer();
+    this.introFinished = false;
+
+    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING"]);
 
     os.chdir("host:/src");
 
@@ -196,55 +200,61 @@ export class StandingPlayer extends Player {
     this.isJumping = false;
     this.isShooting = false;
 
-    this.moveX = 0;
+    if (this.introFinished) {
 
-    if (PAD.btns & Pads.SQUARE) {
-      this.isShooting = true;
-    }
+      this.moveX = 0;
 
-    if (PAD.btns & Pads.L1 && !this.isDashing && this.dashReloadTime.get() >= 500) {
-      this.isDashing = true;
-      this.dashDelay.reset();
-      this.dashReloadTime.reset();
-    }
-
-    if (this.isDashing) {
-      this.dash(PAD);
-    }
-
-    if (!this.isDashing) {
-      if (PAD.btns & Pads.LEFT || PAD.btns & Pads.RIGHT || PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-        this.isRunning = true;
+      if (PAD.btns & Pads.SQUARE) {
+        this.isShooting = true;
       }
 
-      if (PAD.btns & Pads.DOWN || PAD.ly > HALF_ANALOGIC) {
-        if (!this.startingDucking && !this.isDucking) {
-          this.startingDucking = true;
+      if (PAD.btns & Pads.L1 && !this.isDashing && this.dashReloadTime.get() >= 500) {
+        this.isDashing = true;
+        this.dashDelay.reset();
+        this.dashReloadTime.reset();
+      }
+
+      if (this.isDashing) {
+        this.dash(PAD);
+      }
+
+      if (!this.isDashing) {
+        if (PAD.btns & Pads.LEFT || PAD.btns & Pads.RIGHT || PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
+          this.isRunning = true;
+        }
+
+        if (PAD.btns & Pads.DOWN || PAD.ly > HALF_ANALOGIC) {
+          if (!this.startingDucking && !this.isDucking) {
+            this.startingDucking = true;
+          }
+        }
+        else {
+          this.startingDucking = false;
+          this.isDucking = false;
+        }
+
+        if (this.startingDucking && !this.isDucking) {
+          this.ducking(PAD);
+        }
+        else if (!this.startingDucking && this.isDucking) {
+          this.duck(PAD);
+        }
+        else if ((PAD.btns & Pads.UP) && this.isRunning && this.isShooting) {
+          this.runShootDiagonalUp(PAD);
+        }
+        else if (this.isRunning && !this.isShooting) {
+          this.run(PAD);
+        }
+        else if (this.isRunning && this.isShooting) {
+          this.runShootStraight(PAD);
+        }
+        else {
+          this.idle(PAD);
         }
       }
-      else {
-        this.startingDucking = false;
-        this.isDucking = false;
-      }
-
-      if (this.startingDucking && !this.isDucking) {
-        this.ducking(PAD);
-      }
-      else if (!this.startingDucking && this.isDucking) {
-        this.duck(PAD);
-      }
-      else if ((PAD.btns & Pads.UP) && this.isRunning && this.isShooting) {
-        this.runShootDiagonalUp(PAD);
-      }
-      else if (this.isRunning && !this.isShooting) {
-        this.run(PAD);
-      }
-      else if (this.isRunning && this.isShooting) {
-        this.runShootStraight(PAD);
-      }
-      else {
-        this.idle(PAD);
-      }
+    }
+    else {
+      this.entity.currentAnimation = this.entity.INTRO;
     }
 
     this.entity.x += this.moveX;
@@ -252,6 +262,10 @@ export class StandingPlayer extends Player {
     this.entity.animations[this.entity.currentAnimation].sprite.flipX = this.flipX;
 
     this.entity.animate(this.entity.currentAnimation, this.fps, camera);
+
+    if (this.entity.isLastFrame() && this.entity.currentAnimation == this.entity.INTRO) {
+      this.introFinished = true;
+    }
 
     this.bullets.forEach(bullet => bullet.update(this.entity.x, this.entity.y, []));
   }
