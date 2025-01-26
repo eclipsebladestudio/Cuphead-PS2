@@ -180,6 +180,11 @@ export class StandingPlayer extends Player {
   runShootDiagonalUp(PAD) {
     this.entity.currentAnimation = this.entity.RUN_SHOOT_DIAGONAL_UP;
     this.flipX = PAD.btns & Pads.LEFT ? true : false;
+
+    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
+      this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
+    }
+    
     this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
 
     if (this.shootDelay.get() >= 250) {
@@ -239,7 +244,7 @@ export class StandingPlayer extends Player {
         else if (!this.startingDucking && this.isDucking) {
           this.duck(PAD);
         }
-        else if ((PAD.btns & Pads.UP) && this.isRunning && this.isShooting) {
+        else if (((PAD.btns & Pads.UP) || (PAD.ly < -HALF_ANALOGIC)) && this.isRunning && this.isShooting) {
           this.runShootDiagonalUp(PAD);
         }
         else if (this.isRunning && !this.isShooting) {
