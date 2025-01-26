@@ -14,6 +14,7 @@ const PLAYER_ANIMATIONS = [
   {name: "RUN_SHOOT_DIAGONAL_UP", spritesheetPath: "Player/sheet4.png",jumpers: [{ imagesLength: 6, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 76, heightPerImage: 88, offsetY: -4, offsetX: -5},{ imagesLength: 6, imageOffsetX: 0, imageOffsetY: 88, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 176, widthPerImage: 76, heightPerImage: 88, offsetX: -5, offsetY: -4},],reverse: false},
   {name: "DUCK", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 5, imageOffsetX: 0, imageOffsetY: 128, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},],reverse: true},
   {name: "DUCK_TURN", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 1, imageOffsetX: 0, imageOffsetY: 192, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},],reverse: false},
+  {name: "DUCK_SHOOT", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 256, widthPerImage: 90, heightPerImage: 64, offsetX: -6, offsetY: 9}], reverse: false},
   {name: "DUCKING", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 5, imageOffsetX: 0, imageOffsetY: 0, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 64, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},],reverse: false},
   {name: "DASH_GROUND", spritesheetPath: "Player/sheet5.png", jumpers: [{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 210, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 280, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 350, widthPerImage: 168, heightPerImage: 74,offsetX: -20}], reverse: false},
   {name: "IDLE_SHOOT_STRAIGHT", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 242, widthPerImage: 68, heightPerImage: 82}], reverse: true},
@@ -55,7 +56,7 @@ export class StandingPlayer extends Player {
 
     this.duckTurningTimer.pause();
 
-    this.entity.setAnimations(["IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCKING"]);
+    this.entity.setAnimations(["IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING"]);
 
     os.chdir("host:/src");
 
@@ -116,6 +117,20 @@ export class StandingPlayer extends Player {
       this.entity.currentAnimation = this.entity.DUCK_TURN;
       this.duckTurning = true;
       this.duckTurningTimer.resume();
+      return;
+    }
+
+    if (this.isShooting) {
+
+      this.entity.currentAnimation = this.entity.DUCK_SHOOT;
+
+      if (this.shootDelay.get() >= 250) {
+        const randomX = Math.round(Math.random() * 10)
+        const randomY = Math.round(Math.random() * 15)
+  
+        this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 50 + randomY, this.flipX ? -10 : 10, 0, 30, 5, 0, 5));
+        this.shootDelay.reset();
+      }
     }
   }
 
