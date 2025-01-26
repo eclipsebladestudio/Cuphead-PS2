@@ -73,7 +73,7 @@ export class StandingPlayer extends Player {
       const randomX = Math.round(Math.random() * 10)
       const randomY = Math.round(Math.random() * 15)
 
-      if (PAD.btns & Pads.UP) {
+      if (PAD.btns & Pads.UP || PAD.ly < -HALF_ANALOGIC) {
         this.entity.currentAnimation = this.entity.IDLE_SHOOT_UP;
         this.bullets.push(new Bullet(this.entity.x + (this.flipX ? 8 : 45) + randomX, this.entity.y + randomY, 0, -10, 5, 30, 90, 5));
       }
