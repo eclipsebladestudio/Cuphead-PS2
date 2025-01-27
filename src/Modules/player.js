@@ -5,10 +5,11 @@ import { Bullet } from "./bullet.js";
 import { Timer } from "./timer.js";
 
 const HALF_ANALOGIC = 64;
-const RUN_SPEED = 3.5;
+const RUN_SPEED = 4;
 const DASH_SPEED = 11;
 const SHOOT_DELAY = 125;
 const SHOOT_SPEED = 20;
+const DUST_EFFECT_SPEED = 0.5;
 
 const PLAYER_ANIMATIONS = [
   {name: "INTRO", spritesheetPath: "player/intro.png", jumpers: [{imagesLength: 6, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 78, heightPerImage: 84,}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 84, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 168, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 252, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 4, imageOffsetX: 0, imageOffsetY: 336, widthPerImage: 78, heightPerImage: 84}], reverse: false},
@@ -23,8 +24,7 @@ const PLAYER_ANIMATIONS = [
   {name: "DASH_GROUND", spritesheetPath: "Player/sheet5.png", jumpers: [{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 210, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 280, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 350, widthPerImage: 168, heightPerImage: 74,offsetX: -20}], reverse: false},
   {name: "IDLE_SHOOT_STRAIGHT", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 242, widthPerImage: 68, heightPerImage: 82}], reverse: true},
   {name: "IDLE_SHOOT_UP", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 324, widthPerImage: 54, heightPerImage: 88, offsetX: -2, offsetY: -3}], reverse: true},
-  {name: "SPECIAL_GROUND_STRAIGHT", spritesheetPath: "Player/sheet6.png",  jumpers: [{   imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 0,    widthPerImage: 93,    heightPerImage: 76, offsetX: -6},{    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 76,    widthPerImage: 94,    heightPerImage: 78, offsetX: -6}, {    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 159,    widthPerImage: 94,    heightPerImage: 82, offsetX: -6}, {    imagesLength: 1,    imageOffsetX: 0,    imageOffsetY: 241,    widthPerImage: 70,    heightPerImage: 82, offsetX: -6}], reverse: false},
-  {name: "RUN_DUST_EFFECT_1", spritesheetPath: "Player/dust_effect.png", jumpers: [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 56, heightPerImage: 52}, {imagesLength: 5, imageOffsetX: 0, imageOffsetY: 52, widthPerImage: 56,  heightPerImage: 52}],reverse: false}
+  {name: "SPECIAL_GROUND_STRAIGHT", spritesheetPath: "Player/sheet6.png",  jumpers: [{   imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 0,    widthPerImage: 93,    heightPerImage: 76, offsetX: -6},{    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 76,    widthPerImage: 94,    heightPerImage: 78, offsetX: -6}, {    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 159,    widthPerImage: 94,    heightPerImage: 82, offsetX: -6}, {    imagesLength: 1,    imageOffsetX: 0,    imageOffsetY: 241,    widthPerImage: 70,    heightPerImage: 82, offsetX: -6}], reverse: false}
 ]
 
 export class Player {
@@ -69,9 +69,25 @@ export class StandingPlayer extends Player {
     this.introTimer = new Timer();
     this.introFinished = false;
 
-    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING", "SPECIAL_GROUND_STRAIGHT", "RUN_DUST_EFFECT_1"]);
+    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING", "SPECIAL_GROUND_STRAIGHT"]);
 
     os.chdir("host:/src");
+
+    this.runDustEffects = []
+
+    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 51, widthPerImage: 56,  heightPerImage: 52}], false), 24));
+    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 103, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 154, widthPerImage: 56,  heightPerImage: 52}], false), 24));
+    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 206, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 256, widthPerImage: 56,  heightPerImage: 52}], false), 24));
+
+    this.currentRunDustEffectIndex = -1;
+
+    this.runDustEffectTimer = new Timer();
+
+    this.runDustEffects.forEach(effect => {
+      effect.onUpdate = function() {
+        effect.y -= DUST_EFFECT_SPEED;
+      }
+    })
 
     this.fingerEffect = new Effect(new Sprite("Player/Finger/finger.png", 0, 0, [{imagesLength: 2, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 53, heightPerImage: 50},{imagesLength: 2, imageOffsetX: 0, imageOffsetY: 42, widthPerImage: 53, heightPerImage: 50}], false), 24);
     PLAYER_ANIMATIONS.forEach(animation => this.entity.index(this.entity[animation.name], new Sprite(animation.spritesheetPath, x, y, animation.jumpers, animation.reverse)));
@@ -177,6 +193,19 @@ export class StandingPlayer extends Player {
     }
 
     this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
+
+    if (this.runDustEffectTimer.get() >= 250) {
+      this.currentRunDustEffectIndex++;
+
+      if (this.currentRunDustEffectIndex > 2) {
+        this.currentRunDustEffectIndex = 0;
+      }
+
+      this.runDustEffects[this.currentRunDustEffectIndex].active = true;
+      this.runDustEffects[this.currentRunDustEffectIndex].x = this.entity.x
+      this.runDustEffects[this.currentRunDustEffectIndex].y = this.entity.y + 41
+      this.runDustEffectTimer.reset();
+    }
   }
 
   runShootStraight(PAD) {
@@ -320,5 +349,13 @@ export class StandingPlayer extends Player {
     }
 
     this.bullets.forEach(bullet => bullet.update(this.entity.x, this.entity.y, []));
+
+    this.runDustEffects.forEach(effect => {
+      effect.update();
+      effect.draw();
+      if (effect.sprite.inLastFrame) {
+        effect.active = false;
+      }
+    })
   }
 }

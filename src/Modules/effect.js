@@ -23,17 +23,18 @@ export class Effect {
         this.sprite.y = this.y;
 
         if (this.timer.get() >= this.fps) {
-            this.sprite.update()
+            this.sprite.update();
             this.timer.reset();
         }
 
         if (this.onUpdate != undefined) {
-            this.onUpdate(this);
+            this.onUpdate();
         } 
     }
 
     draw() {
 
+        console.log(this.active)
         if (!this.active) {
             return;
         }
