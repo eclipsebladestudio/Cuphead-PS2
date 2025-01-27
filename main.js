@@ -1,5 +1,3 @@
-std.reload("host:/src/Scenes/Elder Kettle/main.js");
-
 import { FadeIn, FadeOut } from "./src/Modules/fade.js";
 
 const introImage = new Image("host:/src/Logo/LOGOt.png");

@@ -1,4 +1,5 @@
 import { Entity } from "./entity.js";
+import { Effect } from "./effect.js";
 import { Sprite } from "./sprite.js";
 import { Bullet } from "./bullet.js";
 import { Timer } from "./timer.js";
@@ -23,6 +24,7 @@ const PLAYER_ANIMATIONS = [
   {name: "IDLE_SHOOT_STRAIGHT", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 242, widthPerImage: 68, heightPerImage: 82}], reverse: true},
   {name: "IDLE_SHOOT_UP", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 324, widthPerImage: 54, heightPerImage: 88, offsetX: -2, offsetY: -3}], reverse: true},
   {name: "SPECIAL_GROUND_STRAIGHT", spritesheetPath: "Player/sheet6.png",  jumpers: [{   imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 0,    widthPerImage: 93,    heightPerImage: 76, offsetX: -6},{    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 76,    widthPerImage: 94,    heightPerImage: 78, offsetX: -6}, {    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 159,    widthPerImage: 94,    heightPerImage: 82, offsetX: -6}, {    imagesLength: 1,    imageOffsetX: 0,    imageOffsetY: 241,    widthPerImage: 70,    heightPerImage: 82, offsetX: -6}], reverse: false},
+  {name: "RUN_DUST_EFFECT_1", spritesheetPath: "Player/dust_effect.png", jumpers: [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 56, heightPerImage: 52}, {imagesLength: 5, imageOffsetX: 0, imageOffsetY: 52, widthPerImage: 56,  heightPerImage: 52}],reverse: false}
 ]
 
 export class Player {
@@ -67,18 +69,11 @@ export class StandingPlayer extends Player {
     this.introTimer = new Timer();
     this.introFinished = false;
 
-    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING", "SPECIAL_GROUND_STRAIGHT"]);
+    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING", "SPECIAL_GROUND_STRAIGHT", "RUN_DUST_EFFECT_1"]);
 
     os.chdir("host:/src");
 
-    this.fingerEffect = new Sprite("Player/Finger/finger.png", 0, 0, [{imagesLength: 2, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 53, heightPerImage: 50},{imagesLength: 2, imageOffsetX: 0, imageOffsetY: 42, widthPerImage: 53, heightPerImage: 50}], false)
-    this.fingerEffect.fps = 1000 / 24;
-    this.fingerEffect.animation = new Timer();
-
-    if (this.isShooting) {
-      this.fingerEffect.update();
-      this.fingerEffect.draw();
-    }
+    this.fingerEffect = new Effect(new Sprite("Player/Finger/finger.png", 0, 0, [{imagesLength: 2, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 53, heightPerImage: 50},{imagesLength: 2, imageOffsetX: 0, imageOffsetY: 42, widthPerImage: 53, heightPerImage: 50}], false), 24);
     PLAYER_ANIMATIONS.forEach(animation => this.entity.index(this.entity[animation.name], new Sprite(animation.spritesheetPath, x, y, animation.jumpers, animation.reverse)));
   }
 
@@ -320,11 +315,7 @@ export class StandingPlayer extends Player {
     }
 
     if (this.isShooting) {
-
-      if (this.fingerEffect.animation.get() >= this.fingerEffect.fps) {
-          this.fingerEffect.update();
-          this.fingerEffect.animation.reset();
-      }
+      this.fingerEffect.update();
       this.fingerEffect.draw();
     }
 
