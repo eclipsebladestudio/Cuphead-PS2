@@ -6,6 +6,8 @@ import { Timer } from "./timer.js";
 const HALF_ANALOGIC = 64;
 const RUN_SPEED = 3.5;
 const DASH_SPEED = 11;
+const SHOOT_DELAY = 125;
+const SHOOT_SPEED = 20;
 
 const PLAYER_ANIMATIONS = [
   {name: "INTRO", spritesheetPath: "player/intro.png", jumpers: [{imagesLength: 6, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 78, heightPerImage: 84,}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 84, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 168, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 6, imageOffsetX: 0, imageOffsetY: 252, widthPerImage: 78, heightPerImage: 84}, {imagesLength: 4, imageOffsetX: 0, imageOffsetY: 336, widthPerImage: 78, heightPerImage: 84}], reverse: false},
@@ -87,13 +89,13 @@ export class StandingPlayer extends Player {
       return;
     }
 
-    if (this.shootDelay.get() >= 250) {
+    if (this.shootDelay.get() >= SHOOT_DELAY) {
       const randomX = Math.round(Math.random() * 10)
       const randomY = Math.round(Math.random() * 15)
 
       if (PAD.btns & Pads.UP || PAD.ly < -HALF_ANALOGIC) {
         this.entity.currentAnimation = this.entity.IDLE_SHOOT_UP;
-        this.bullets.push(new Bullet(this.entity.x + (this.flipX ? 8 : 45) + randomX, this.entity.y + randomY, 0, -10, 5, 30, 90, 5));
+        this.bullets.push(new Bullet(this.entity.x + (this.flipX ? 8 : 45) + randomX, this.entity.y + randomY, 0, -SHOOT_SPEED, 5, 30, 90, 5));
         
         this.shootDelay.reset();
 
@@ -105,7 +107,7 @@ export class StandingPlayer extends Player {
       }
 
       this.entity.currentAnimation = this.entity.IDLE_SHOOT_STRAIGHT;
-      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 35 + randomY, this.flipX ? -10 : 10, 0, 30, 5, 0, 5));
+      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 35 + randomY, this.flipX ? -SHOOT_SPEED :SHOOT_SPEED, 0, 30, 5, 0, 5));
       this.fingerEffect.x = this.entity.x + (this.flipX ? -20 : 33)
       this.fingerEffect.y = this.entity.y + 17
       this.shootDelay.reset();
@@ -150,11 +152,13 @@ export class StandingPlayer extends Player {
 
       this.entity.currentAnimation = this.entity.DUCK_SHOOT;
 
-      if (this.shootDelay.get() >= 250) {
+      if (this.shootDelay.get() >= SHOOT_DELAY) {
         const randomX = Math.round(Math.random() * 10)
         const randomY = Math.round(Math.random() * 15)
   
-        this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 50 + randomY, this.flipX ? -10 : 10, 0, 30, 5, 0, 5));
+        this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 50 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, 0, 30, 5, 0, 5));
+        this.fingerEffect.x = this.entity.x + (this.flipX ? -30 : 46)
+        this.fingerEffect.y = this.entity.y + 31
         this.shootDelay.reset();
       }
     }
@@ -190,11 +194,11 @@ export class StandingPlayer extends Player {
 
     this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
 
-    if (this.shootDelay.get() >= 250) {
+    if (this.shootDelay.get() >= SHOOT_DELAY) {
       const randomX = Math.round(Math.random() * 10)
       const randomY = Math.round(Math.random() * 15)
 
-      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 35 + randomY, this.flipX ? -10 : 10, 0, 30, 5, 0, 5));
+      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 35 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, 0, 30, 5, 0, 5));
       this.shootDelay.reset();
     }
 
@@ -214,11 +218,11 @@ export class StandingPlayer extends Player {
     
     this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
 
-    if (this.shootDelay.get() >= 250) {
+    if (this.shootDelay.get() >= SHOOT_DELAY) {
       const randomX = Math.round(Math.random() * 10)
       const randomY = Math.round(Math.random() * 15)
 
-      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -78 : 88) + randomX, this.entity.y + 6 + randomY, this.flipX ? -10 : 10, -10, 10, 10, this.flipX ? -45 : 45, 5));
+      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -78 : 88) + randomX, this.entity.y + 6 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, -SHOOT_SPEED, 10, 10, this.flipX ? -45 : 45, 5));
       this.shootDelay.reset();
     }
 
