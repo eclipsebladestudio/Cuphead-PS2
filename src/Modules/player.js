@@ -93,6 +93,16 @@ export class StandingPlayer extends Player {
     PLAYER_ANIMATIONS.forEach(animation => this.entity.index(this.entity[animation.name], new Sprite(animation.spritesheetPath, x, y, animation.jumpers, animation.reverse)));
   }
 
+  getPlayerFlipX(PAD) {
+    let flipX = PAD.btns & Pads.LEFT ? true : false;
+
+    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
+      flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
+    }
+
+    return flipX;
+  }
+
   idle(PAD) {
 
     if (!this.isShooting) {
@@ -155,11 +165,7 @@ export class StandingPlayer extends Player {
 
     this.entity.currentAnimation = this.duckTurning ? this.entity.DUCK_TURN : this.entity.DUCK;
 
-    let newFlipX = PAD.btns & Pads.LEFT ? true : false;
-
-    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-      newFlipX = PAD.lx < -HALF_ANALOGIC ? true : false;
-    }
+    let newFlipX = this.getPlayerFlipX(PAD);
 
     if (this.flipX != newFlipX) {
       this.flipX = newFlipX;
@@ -197,11 +203,7 @@ export class StandingPlayer extends Player {
   run(PAD) {
 
     this.entity.currentAnimation = this.isShooting ? this.entity.RUN_SHOOT_STRAIGHT : this.entity.RUN;
-    this.flipX = PAD.btns & Pads.LEFT ? true : false;
-
-    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-      this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
-    }
+    this.flipX = this.getPlayerFlipX(PAD);
 
     this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
 
