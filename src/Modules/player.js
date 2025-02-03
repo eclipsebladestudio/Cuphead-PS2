@@ -21,7 +21,8 @@ const PLAYER_ANIMATIONS = [
   {name: "DUCK_TURN", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 1, imageOffsetX: 0, imageOffsetY: 192, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},],reverse: false},
   {name: "DUCK_SHOOT", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 256, widthPerImage: 90, heightPerImage: 64, offsetX: -6, offsetY: 9}], reverse: false},
   {name: "DUCKING", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 5, imageOffsetX: 0, imageOffsetY: 0, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 64, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},],reverse: false},
-  {name: "DASH_GROUND", spritesheetPath: "Player/sheet5.png", jumpers: [{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 210, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 280, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 350, widthPerImage: 168, heightPerImage: 74,offsetX: -20}], reverse: false},
+  {name: "START_DASH_GROUND", spritesheetPath: "Player/sheet5.png", jumpers: [{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 210, widthPerImage: 168, heightPerImage: 74,offsetX: -20}], reverse: false},
+  {name: "DASH_GROUND", spritesheetPath: "Player/sheet5.png", jumpers: [{ imagesLength: 1, imageOffsetX: 336, imageOffsetY: 210, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 280, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 350, widthPerImage: 168, heightPerImage: 74,offsetX: -20}], reverse: false},
   {name: "IDLE_SHOOT_STRAIGHT", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 242, widthPerImage: 68, heightPerImage: 82}], reverse: true},
   {name: "IDLE_SHOOT_UP", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 324, widthPerImage: 54, heightPerImage: 88, offsetX: -2, offsetY: -3}], reverse: true},
   {name: "SPECIAL_GROUND_STRAIGHT", spritesheetPath: "Player/sheet6.png",  jumpers: [{   imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 0,    widthPerImage: 93,    heightPerImage: 76, offsetX: -6},{    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 76,    widthPerImage: 94,    heightPerImage: 78, offsetX: -6}, {    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 159,    widthPerImage: 94,    heightPerImage: 82, offsetX: -6}, {    imagesLength: 1,    imageOffsetX: 0,    imageOffsetY: 241,    widthPerImage: 70,    heightPerImage: 82, offsetX: -6}], reverse: false}
@@ -58,6 +59,7 @@ export class StandingPlayer extends Player {
 
     this.dashDelay = new Timer();
     this.dashReloadTime = new Timer();
+    this.startingDash = false;
 
     this.duckTurning = false;
     this.startingDucking = false;
@@ -69,7 +71,7 @@ export class StandingPlayer extends Player {
     this.introTimer = new Timer();
     this.introFinished = false;
 
-    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING", "SPECIAL_GROUND_STRAIGHT"]);
+    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "START_DASH_GROUND", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING", "SPECIAL_GROUND_STRAIGHT"]);
 
     os.chdir("host:/src");
 
@@ -133,6 +135,16 @@ export class StandingPlayer extends Player {
     }
 
     this.moveX = this.flipX ? -DASH_SPEED : DASH_SPEED;
+
+    if (this.entity.isLastFrame() && this.startingDash) {
+      this.startingDash = false;
+    }
+
+    if (this.startingDash) {
+      this.entity.currentAnimation = this.entity.START_DASH_GROUND;
+      return;
+    }
+
     this.entity.currentAnimation = this.entity.DASH_GROUND;
   }
 
@@ -286,6 +298,7 @@ export class StandingPlayer extends Player {
 
       if (PAD.btns & Pads.L1 && !this.isDashing && this.dashReloadTime.get() >= 500) {
         this.isDashing = true;
+        this.startingDash = true;
         this.dashDelay.reset();
         this.dashReloadTime.reset();
       }

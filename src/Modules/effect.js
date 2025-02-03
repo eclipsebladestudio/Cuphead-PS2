@@ -34,7 +34,6 @@ export class Effect {
 
     draw() {
 
-        console.log(this.active)
         if (!this.active) {
             return;
         }
