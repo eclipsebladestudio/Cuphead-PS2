@@ -271,7 +271,7 @@ export class StandingPlayer extends Player {
     })
   }
 
-  move(speed, camera) {
+  update(speed, camera) {
     const PAD = Pads.get();
 
     this.fps = 24;
@@ -352,5 +352,9 @@ export class StandingPlayer extends Player {
 
     this.updateBullets();
     this.updateEffects();
+  }
+
+  draw(camera) {
+    this.entity.draw(camera);
   }
 }

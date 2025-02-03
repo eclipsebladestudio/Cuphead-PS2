@@ -37,8 +37,8 @@ while (true) {
   Screen.clear()
   background.draw(0, 0)
 
-	player1.move(250, camera);
-	player1.entity.draw(camera);
+	player1.update(250, camera);
+	player1.draw(camera);
 
 	elderKettle.update()
 	elderKettle.draw(480, 217)
