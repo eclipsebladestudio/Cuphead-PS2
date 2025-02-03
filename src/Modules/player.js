@@ -197,7 +197,8 @@ export class StandingPlayer extends Player {
   }
 
   run(PAD) {
-    this.entity.currentAnimation = this.entity.RUN;
+
+    this.entity.currentAnimation = this.isShooting ? this.entity.RUN_SHOOT_STRAIGHT : this.entity.RUN;
     this.flipX = PAD.btns & Pads.LEFT ? true : false;
 
     if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
@@ -218,54 +219,36 @@ export class StandingPlayer extends Player {
       this.runDustEffects[this.currentRunDustEffectIndex].y = this.entity.y + 41
       this.runDustEffectTimer.reset();
     }
-  }
 
-  runShootStraight(PAD) {
-    this.entity.currentAnimation = this.entity.RUN_SHOOT_STRAIGHT;
-    this.flipX = PAD.btns & Pads.LEFT ? true : false;
-
-    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-      this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
+    if (!this.isShooting) {
+        return;
     }
 
-    this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
+    const isShootingDiagonalUp = (PAD.btns & Pads.UP) || (PAD.ly < -HALF_ANALOGIC)
 
     if (this.shootDelay.get() >= SHOOT_DELAY) {
-      const randomX = Math.round(Math.random() * 10)
-      const randomY = Math.round(Math.random() * 15)
+        const randomX = Math.round(Math.random() * 10)
+        const randomY = Math.round(Math.random() * 15)
+  
+        if (isShootingDiagonalUp) {
+            this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -78 : 88) + randomX, this.entity.y + 6 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, -SHOOT_SPEED, 10, 10, this.flipX ? -45 : 45, 5));
+        }
+        else {
+            this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 35 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, 0, 30, 5, 0, 5));
+        }
 
-      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 35 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, 0, 30, 5, 0, 5));
-      this.shootDelay.reset();
+        this.shootDelay.reset();
     }
 
-    if (this.isShooting) {
-      this.fingerEffect.x = this.entity.x + (this.flipX ? -27 : 34)
-      this.fingerEffect.y = this.entity.y + 17
-    }
-  }
-
-  runShootDiagonalUp(PAD) {
-    this.entity.currentAnimation = this.entity.RUN_SHOOT_DIAGONAL_UP;
-    this.flipX = PAD.btns & Pads.LEFT ? true : false;
-
-    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-      this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
-    }
-    
-    this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
-
-    if (this.shootDelay.get() >= SHOOT_DELAY) {
-      const randomX = Math.round(Math.random() * 10)
-      const randomY = Math.round(Math.random() * 15)
-
-      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -78 : 88) + randomX, this.entity.y + 6 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, -SHOOT_SPEED, 10, 10, this.flipX ? -45 : 45, 5));
-      this.shootDelay.reset();
+    if (isShootingDiagonalUp) {
+        this.entity.currentAnimation = this.entity.RUN_SHOOT_DIAGONAL_UP
+        this.fingerEffect.x = this.entity.x + (this.flipX ? -28 : 35)
+        this.fingerEffect.y = this.entity.y - 2
+        return
     }
 
-    if (this.isShooting) {
-      this.fingerEffect.x = this.entity.x + (this.flipX ? -28 : 35)
-      this.fingerEffect.y = this.entity.y - 2
-    }
+    this.fingerEffect.x = this.entity.x + (this.flipX ? -27 : 34)
+    this.fingerEffect.y = this.entity.y + 17
   }
 
   energyBeamSpecial(PAD) {
@@ -328,14 +311,8 @@ export class StandingPlayer extends Player {
         else if (!this.startingDucking && this.isDucking) {
           this.duck(PAD);
         }
-        else if (((PAD.btns & Pads.UP) || (PAD.ly < -HALF_ANALOGIC)) && this.isRunning && this.isShooting) {
-          this.runShootDiagonalUp(PAD);
-        }
-        else if (this.isRunning && !this.isShooting) {
+        else if (this.isRunning) {
           this.run(PAD);
-        }
-        else if (this.isRunning && this.isShooting) {
-          this.runShootStraight(PAD);
         }
         else {
           this.idle(PAD);
