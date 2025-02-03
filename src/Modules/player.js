@@ -38,8 +38,6 @@ export class StandingPlayer extends Player {
   constructor(x, y, w, h, angle) {
     super(x, y, w, h, angle);
 
-    this.font = new Font();
-
     this.fps = 24;
 
     this.moveX = 0;
@@ -259,6 +257,20 @@ export class StandingPlayer extends Player {
     }
   }
 
+  updateBullets() {
+    this.bullets.forEach(bullet => bullet.update(this.entity.x, this.entity.y, []));
+  }
+
+  updateEffects() {
+    this.runDustEffects.forEach(effect => {
+        effect.update();
+        effect.draw();
+        if (effect.sprite.inLastFrame) {
+          effect.active = false;
+        }
+    })
+  }
+
   move(speed, camera) {
     const PAD = Pads.get();
 
@@ -338,14 +350,7 @@ export class StandingPlayer extends Player {
       this.fingerEffect.draw();
     }
 
-    this.bullets.forEach(bullet => bullet.update(this.entity.x, this.entity.y, []));
-
-    this.runDustEffects.forEach(effect => {
-      effect.update();
-      effect.draw();
-      if (effect.sprite.inLastFrame) {
-        effect.active = false;
-      }
-    })
+    this.updateBullets();
+    this.updateEffects();
   }
 }
