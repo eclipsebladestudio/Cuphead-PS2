@@ -73,11 +73,11 @@ export class StandingPlayer extends Player {
 
     os.chdir("host:/src");
 
-    this.runDustEffects = []
-
-    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 51, widthPerImage: 56,  heightPerImage: 52}], false), 24));
-    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 103, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 154, widthPerImage: 56,  heightPerImage: 52}], false), 24));
-    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 206, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 256, widthPerImage: 56,  heightPerImage: 52}], false), 24));
+    this.runDustEffects = [
+      new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 51, widthPerImage: 56,  heightPerImage: 52}], false), 24),
+      new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 103, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 154, widthPerImage: 56,  heightPerImage: 52}], false), 24),
+      new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 206, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 256, widthPerImage: 56,  heightPerImage: 52}], false), 24),
+    ];
 
     this.currentRunDustEffectIndex = -1;
 
@@ -273,6 +273,12 @@ export class StandingPlayer extends Player {
     })
   }
 
+  updateIntro() {
+    if (this.entity.isLastFrame()) {
+      this.introFinished = true;
+    }
+  }
+
   update(speed, camera) {
     const PAD = Pads.get();
 
@@ -343,8 +349,8 @@ export class StandingPlayer extends Player {
 
     this.entity.animate(this.entity.currentAnimation, this.fps, camera);
 
-    if (this.entity.isLastFrame() && this.entity.currentAnimation == this.entity.INTRO) {
-      this.introFinished = true;
+    if (this.entity.currentAnimation == this.entity.INTRO) {
+      this.updateIntro();
     }
 
     if (this.isShooting) {
