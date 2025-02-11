@@ -21,7 +21,8 @@ const PLAYER_ANIMATIONS = [
   {name: "DUCK_TURN", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 1, imageOffsetX: 0, imageOffsetY: 192, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},],reverse: false},
   {name: "DUCK_SHOOT", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 256, widthPerImage: 90, heightPerImage: 64, offsetX: -6, offsetY: 9}], reverse: false},
   {name: "DUCKING", spritesheetPath: "Player/sheet12.png",jumpers: [{ imagesLength: 5, imageOffsetX: 0, imageOffsetY: 0, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 64, widthPerImage:86, heightPerImage: 64, offsetX: -6, offsetY: 9},],reverse: false},
-  {name: "DASH_GROUND", spritesheetPath: "Player/sheet5.png", jumpers: [{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 210, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 280, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 350, widthPerImage: 168, heightPerImage: 74,offsetX: -20}], reverse: false},
+  {name: "START_DASH_GROUND", spritesheetPath: "Player/sheet5.png", jumpers: [{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 210, widthPerImage: 168, heightPerImage: 74,offsetX: -20}], reverse: false},
+  {name: "DASH_GROUND", spritesheetPath: "Player/sheet5.png", jumpers: [{ imagesLength: 1, imageOffsetX: 336, imageOffsetY: 210, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 3, imageOffsetX: 0, imageOffsetY: 280, widthPerImage: 168, heightPerImage: 74,offsetX: -20},{ imagesLength: 2, imageOffsetX: 0, imageOffsetY: 350, widthPerImage: 168, heightPerImage: 74,offsetX: -20}], reverse: false},
   {name: "IDLE_SHOOT_STRAIGHT", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 242, widthPerImage: 68, heightPerImage: 82}], reverse: true},
   {name: "IDLE_SHOOT_UP", spritesheetPath: "Player/sheet1.png", jumpers: [{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 324, widthPerImage: 54, heightPerImage: 88, offsetX: -2, offsetY: -3}], reverse: true},
   {name: "SPECIAL_GROUND_STRAIGHT", spritesheetPath: "Player/sheet6.png",  jumpers: [{   imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 0,    widthPerImage: 93,    heightPerImage: 76, offsetX: -6},{    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 76,    widthPerImage: 94,    heightPerImage: 78, offsetX: -6}, {    imagesLength: 4,    imageOffsetX: 0,    imageOffsetY: 159,    widthPerImage: 94,    heightPerImage: 82, offsetX: -6}, {    imagesLength: 1,    imageOffsetX: 0,    imageOffsetY: 241,    widthPerImage: 70,    heightPerImage: 82, offsetX: -6}], reverse: false}
@@ -36,8 +37,6 @@ export class Player {
 export class StandingPlayer extends Player {
   constructor(x, y, w, h, angle) {
     super(x, y, w, h, angle);
-
-    this.font = new Font();
 
     this.fps = 24;
 
@@ -58,6 +57,7 @@ export class StandingPlayer extends Player {
 
     this.dashDelay = new Timer();
     this.dashReloadTime = new Timer();
+    this.startingDash = false;
 
     this.duckTurning = false;
     this.startingDucking = false;
@@ -69,15 +69,15 @@ export class StandingPlayer extends Player {
     this.introTimer = new Timer();
     this.introFinished = false;
 
-    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING", "SPECIAL_GROUND_STRAIGHT"]);
+    this.entity.setAnimations(["INTRO", "IDLE", "IDLE_SHOOT_STRAIGHT", "IDLE_SHOOT_UP", "RUN", "RUN_SHOOT_STRAIGHT", "RUN_SHOOT_DIAGONAL_UP", "START_DASH_GROUND", "DASH_GROUND", "DUCK", "DUCK_TURN", "DUCK_SHOOT", "DUCKING", "SPECIAL_GROUND_STRAIGHT"]);
 
     os.chdir("host:/src");
 
-    this.runDustEffects = []
-
-    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 51, widthPerImage: 56,  heightPerImage: 52}], false), 24));
-    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 103, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 154, widthPerImage: 56,  heightPerImage: 52}], false), 24));
-    this.runDustEffects.push(new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 206, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 256, widthPerImage: 56,  heightPerImage: 52}], false), 24));
+    this.runDustEffects = [
+      new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 51, widthPerImage: 56,  heightPerImage: 52}], false), 24),
+      new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 103, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 154, widthPerImage: 56,  heightPerImage: 52}], false), 24),
+      new Effect(new Sprite("Player/dust_effect.png", 0, 0, [{imagesLength: 9, imageOffsetX: 0, imageOffsetY: 206, widthPerImage: 56, heightPerImage: 50},{imagesLength: 5, imageOffsetX: 0, imageOffsetY: 256, widthPerImage: 56,  heightPerImage: 52}], false), 24),
+    ];
 
     this.currentRunDustEffectIndex = -1;
 
@@ -91,6 +91,16 @@ export class StandingPlayer extends Player {
 
     this.fingerEffect = new Effect(new Sprite("Player/Finger/finger.png", 0, 0, [{imagesLength: 2, imageOffsetX: 0, imageOffsetY: 0, widthPerImage: 53, heightPerImage: 50},{imagesLength: 2, imageOffsetX: 0, imageOffsetY: 42, widthPerImage: 53, heightPerImage: 50}], false), 24);
     PLAYER_ANIMATIONS.forEach(animation => this.entity.index(this.entity[animation.name], new Sprite(animation.spritesheetPath, x, y, animation.jumpers, animation.reverse)));
+  }
+
+  getPlayerFlipX(PAD) {
+    let flipX = PAD.btns & Pads.LEFT ? true : false;
+
+    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
+      flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
+    }
+
+    return flipX;
   }
 
   idle(PAD) {
@@ -133,6 +143,16 @@ export class StandingPlayer extends Player {
     }
 
     this.moveX = this.flipX ? -DASH_SPEED : DASH_SPEED;
+
+    if (this.entity.isLastFrame() && this.startingDash) {
+      this.startingDash = false;
+    }
+
+    if (this.startingDash) {
+      this.entity.currentAnimation = this.entity.START_DASH_GROUND;
+      return;
+    }
+
     this.entity.currentAnimation = this.entity.DASH_GROUND;
   }
 
@@ -145,11 +165,7 @@ export class StandingPlayer extends Player {
 
     this.entity.currentAnimation = this.duckTurning ? this.entity.DUCK_TURN : this.entity.DUCK;
 
-    let newFlipX = PAD.btns & Pads.LEFT ? true : false;
-
-    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-      newFlipX = PAD.lx < -HALF_ANALOGIC ? true : false;
-    }
+    let newFlipX = this.getPlayerFlipX(PAD);
 
     if (this.flipX != newFlipX) {
       this.flipX = newFlipX;
@@ -185,12 +201,9 @@ export class StandingPlayer extends Player {
   }
 
   run(PAD) {
-    this.entity.currentAnimation = this.entity.RUN;
-    this.flipX = PAD.btns & Pads.LEFT ? true : false;
 
-    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-      this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
-    }
+    this.entity.currentAnimation = this.isShooting ? this.entity.RUN_SHOOT_STRAIGHT : this.entity.RUN;
+    this.flipX = this.getPlayerFlipX(PAD);
 
     this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
 
@@ -206,54 +219,36 @@ export class StandingPlayer extends Player {
       this.runDustEffects[this.currentRunDustEffectIndex].y = this.entity.y + 41
       this.runDustEffectTimer.reset();
     }
-  }
 
-  runShootStraight(PAD) {
-    this.entity.currentAnimation = this.entity.RUN_SHOOT_STRAIGHT;
-    this.flipX = PAD.btns & Pads.LEFT ? true : false;
-
-    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-      this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
+    if (!this.isShooting) {
+        return;
     }
 
-    this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
+    const isShootingDiagonalUp = (PAD.btns & Pads.UP) || (PAD.ly < -HALF_ANALOGIC)
 
     if (this.shootDelay.get() >= SHOOT_DELAY) {
-      const randomX = Math.round(Math.random() * 10)
-      const randomY = Math.round(Math.random() * 15)
+        const randomX = Math.round(Math.random() * 10)
+        const randomY = Math.round(Math.random() * 15)
+  
+        if (isShootingDiagonalUp) {
+            this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -78 : 88) + randomX, this.entity.y + 6 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, -SHOOT_SPEED, 10, 10, this.flipX ? -45 : 45, 5));
+        }
+        else {
+            this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 35 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, 0, 30, 5, 0, 5));
+        }
 
-      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -30 : 70) + randomX, this.entity.y + 35 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, 0, 30, 5, 0, 5));
-      this.shootDelay.reset();
+        this.shootDelay.reset();
     }
 
-    if (this.isShooting) {
-      this.fingerEffect.x = this.entity.x + (this.flipX ? -27 : 34)
-      this.fingerEffect.y = this.entity.y + 17
-    }
-  }
-
-  runShootDiagonalUp(PAD) {
-    this.entity.currentAnimation = this.entity.RUN_SHOOT_DIAGONAL_UP;
-    this.flipX = PAD.btns & Pads.LEFT ? true : false;
-
-    if (PAD.lx < -HALF_ANALOGIC || PAD.lx > HALF_ANALOGIC) {
-      this.flipX = PAD.lx < -HALF_ANALOGIC ? true : false;
-    }
-    
-    this.moveX = this.flipX ? -RUN_SPEED : RUN_SPEED;
-
-    if (this.shootDelay.get() >= SHOOT_DELAY) {
-      const randomX = Math.round(Math.random() * 10)
-      const randomY = Math.round(Math.random() * 15)
-
-      this.bullets.push(new Bullet(this.entity.x + (this.flipX ? -78 : 88) + randomX, this.entity.y + 6 + randomY, this.flipX ? -SHOOT_SPEED : SHOOT_SPEED, -SHOOT_SPEED, 10, 10, this.flipX ? -45 : 45, 5));
-      this.shootDelay.reset();
+    if (isShootingDiagonalUp) {
+        this.entity.currentAnimation = this.entity.RUN_SHOOT_DIAGONAL_UP
+        this.fingerEffect.x = this.entity.x + (this.flipX ? -28 : 35)
+        this.fingerEffect.y = this.entity.y - 2
+        return
     }
 
-    if (this.isShooting) {
-      this.fingerEffect.x = this.entity.x + (this.flipX ? -28 : 35)
-      this.fingerEffect.y = this.entity.y - 2
-    }
+    this.fingerEffect.x = this.entity.x + (this.flipX ? -27 : 34)
+    this.fingerEffect.y = this.entity.y + 17
   }
 
   energyBeamSpecial(PAD) {
@@ -264,7 +259,27 @@ export class StandingPlayer extends Player {
     }
   }
 
-  move(speed, camera) {
+  updateBullets() {
+    this.bullets.forEach(bullet => bullet.update(this.entity.x, this.entity.y, []));
+  }
+
+  updateEffects() {
+    this.runDustEffects.forEach(effect => {
+        effect.update();
+        effect.draw();
+        if (effect.sprite.inLastFrame) {
+          effect.active = false;
+        }
+    })
+  }
+
+  updateIntro() {
+    if (this.entity.isLastFrame()) {
+      this.introFinished = true;
+    }
+  }
+
+  update(speed, camera) {
     const PAD = Pads.get();
 
     this.fps = 24;
@@ -286,6 +301,7 @@ export class StandingPlayer extends Player {
 
       if (PAD.btns & Pads.L1 && !this.isDashing && this.dashReloadTime.get() >= 500) {
         this.isDashing = true;
+        this.startingDash = true;
         this.dashDelay.reset();
         this.dashReloadTime.reset();
       }
@@ -315,14 +331,8 @@ export class StandingPlayer extends Player {
         else if (!this.startingDucking && this.isDucking) {
           this.duck(PAD);
         }
-        else if (((PAD.btns & Pads.UP) || (PAD.ly < -HALF_ANALOGIC)) && this.isRunning && this.isShooting) {
-          this.runShootDiagonalUp(PAD);
-        }
-        else if (this.isRunning && !this.isShooting) {
+        else if (this.isRunning) {
           this.run(PAD);
-        }
-        else if (this.isRunning && this.isShooting) {
-          this.runShootStraight(PAD);
         }
         else {
           this.idle(PAD);
@@ -339,8 +349,8 @@ export class StandingPlayer extends Player {
 
     this.entity.animate(this.entity.currentAnimation, this.fps, camera);
 
-    if (this.entity.isLastFrame() && this.entity.currentAnimation == this.entity.INTRO) {
-      this.introFinished = true;
+    if (this.entity.currentAnimation == this.entity.INTRO) {
+      this.updateIntro();
     }
 
     if (this.isShooting) {
@@ -348,14 +358,11 @@ export class StandingPlayer extends Player {
       this.fingerEffect.draw();
     }
 
-    this.bullets.forEach(bullet => bullet.update(this.entity.x, this.entity.y, []));
+    this.updateBullets();
+    this.updateEffects();
+  }
 
-    this.runDustEffects.forEach(effect => {
-      effect.update();
-      effect.draw();
-      if (effect.sprite.inLastFrame) {
-        effect.active = false;
-      }
-    })
+  draw(camera) {
+    this.entity.draw(camera);
   }
 }
