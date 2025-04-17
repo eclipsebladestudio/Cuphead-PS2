@@ -10,6 +10,142 @@ std.loadScript("source/assets/scripts/utils.js")
 
 let isDebugEnabled = false;  
 
+function logoUpdate() {
+    const logo = new ImageManager("source/assets/logo/eclipse.png");
+    const eclipsetext = new ImageManager("source/assets/logo/eclipsetext.png");
+
+    let width = 594;
+    let height = 634;
+    const initialTargetWidth = 164;
+    const initialTargetHeight = 204;
+    const screenWidth = 640;
+    const screenHeight = 448;
+    const finalX = 40;
+
+    const finalWidth = 194;
+    const finalHeight = 234;
+
+    let x = (screenWidth - width) / 2;
+    let y = (screenHeight - height) / 2;
+
+    let phase = 1;
+    let showText = false;
+    let textAlpha = 0;
+    let logoAlpha = 0;
+    const fadeSpeed = 0.01;
+    let pauseTimer = 0;
+
+    let fadeOutAlpha = 0;
+    const fadeOutSpeed = 3;
+    let textShownTime = null;
+
+    let startX = x;
+    let startWidth = initialTargetWidth;
+    let startHeight = initialTargetHeight;
+
+    const totalMoveFrames = Math.abs(startX - finalX) / 3; 
+    let moveProgress = 0; 
+
+    const fadeInLogo = () => {
+        if (logoAlpha < 1) {
+            logoAlpha += fadeSpeed;
+            logoAlpha = Math.min(logoAlpha, 1);
+        }
+    };
+
+    const fadeInText = () => {
+        if (textAlpha < 1) {
+            textAlpha += fadeSpeed;
+            textAlpha = Math.min(textAlpha, 1);
+        }
+    };
+
+    Screen.display(() => {
+        Screen.clear();
+
+        if (phase === 1) {
+            fadeInLogo();
+
+            if (width > initialTargetWidth) width -= 3;
+            if (height > initialTargetHeight) height -= 3;
+
+            width = Math.max(width, initialTargetWidth);
+            height = Math.max(height, initialTargetHeight);
+
+            x = (screenWidth - width) / 2;
+            y = (screenHeight - height) / 2;
+
+            if (width === initialTargetWidth && height === initialTargetHeight) {
+                phase = 2;
+                pauseTimer = Date.now();  
+                x = (screenWidth - initialTargetWidth) / 2;
+                startX = x;
+            }
+        } else if (phase === 2) {
+            fadeInLogo();
+
+            if (Date.now() - pauseTimer >= 200) {
+                phase = 3; 
+            }
+
+            if (Date.now() - pauseTimer < 1000) {
+                logo.color = Color.new(128, 128, 128, logoAlpha * 128);
+                logo.width = width;
+                logo.height = height;
+                logo.draw(x, y);
+                return;
+            }
+        } else if (phase === 3) {
+            if (x > finalX) {
+                moveProgress += 0.01;
+                moveProgress = Math.min(moveProgress, 1);
+
+              
+                x = startX + (finalX - startX) * moveProgress;
+                width = initialTargetWidth + (finalWidth - initialTargetWidth) * moveProgress;
+                height = initialTargetHeight + (finalHeight - initialTargetHeight) * moveProgress;
+
+                y = (screenHeight - height) / 2;
+            } else {
+                x = finalX;
+                width = finalWidth;
+                height = finalHeight;
+                y = (screenHeight - height) / 2;
+
+                if (!showText) {
+                    showText = true;
+                    textShownTime = Date.now(); 
+                }
+            }
+        }
+
+        logo.color = Color.new(128, 128, 128, logoAlpha * 128);
+        logo.width = width;
+        logo.height = height;
+        logo.draw(x, y);
+
+        if (showText) {
+            fadeInText();
+            eclipsetext.color = Color.new(255, 255, 255, textAlpha * 128);
+            eclipsetext.draw(-30, 0);
+
+            if (textShownTime && Date.now() - textShownTime >= 5000) {
+                if (fadeOutAlpha < 255) {
+                    fadeOutAlpha += fadeOutSpeed;
+                    if (fadeOutAlpha > 255) fadeOutAlpha = 255;
+                    if (fadeOutAlpha >= 255) {
+                        SceneManager.load(introUpdate)
+                    }
+                }
+                Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, fadeOutAlpha));
+            }
+        }
+    });
+}
+
+
+
+
 function introUpdate() {
     const introFrames = [];
     const frameCount = 100;
@@ -411,5 +547,5 @@ function renderScreen(callback) {
 }
 
 
-SceneManager.load(introUpdate)
+SceneManager.load(logoUpdate)
 
