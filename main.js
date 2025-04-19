@@ -2,13 +2,13 @@ import { SceneManager, ImageManager } from "./source/assets/scripts/scenemanager
 import { drawScreenFX } from "./source/assets/scripts/ScreenFX.js";
 import { Timer } from "./source/assets/scripts/timer.js"
 import { Entity } from "./source/assets/scripts/entity.js"
-import { StandingPlayer } from "./source/assets/scripts/player.js"
+import Player from "./source/assets/scripts/Player/index.js"
 import { Health } from "./source/assets/scripts/health.js"
-import { ElderKettle } from './source/assets/scenes/elder_kettle/elder.js'; 
+import { ElderKettle } from './source/assets/scenes/elder_kettle/elder.js';
 
 std.loadScript("source/assets/scripts/utils.js")
 
-let isDebugEnabled = false;  
+let isDebugEnabled = false;
 
 function logoUpdate() {
     const logo = new ImageManager("source/assets/logo/eclipse.png");
@@ -43,8 +43,8 @@ function logoUpdate() {
     let startWidth = initialTargetWidth;
     let startHeight = initialTargetHeight;
 
-    const totalMoveFrames = Math.abs(startX - finalX) / 3; 
-    let moveProgress = 0; 
+    const totalMoveFrames = Math.abs(startX - finalX) / 3;
+    let moveProgress = 0;
 
     const fadeInLogo = () => {
         if (logoAlpha < 1) {
@@ -77,7 +77,7 @@ function logoUpdate() {
 
             if (width === initialTargetWidth && height === initialTargetHeight) {
                 phase = 2;
-                pauseTimer = Date.now();  
+                pauseTimer = Date.now();
                 x = (screenWidth - initialTargetWidth) / 2;
                 startX = x;
             }
@@ -85,7 +85,7 @@ function logoUpdate() {
             fadeInLogo();
 
             if (Date.now() - pauseTimer >= 200) {
-                phase = 3; 
+                phase = 3;
             }
 
             if (Date.now() - pauseTimer < 1000) {
@@ -100,7 +100,7 @@ function logoUpdate() {
                 moveProgress += 0.01;
                 moveProgress = Math.min(moveProgress, 1);
 
-              
+
                 x = startX + (finalX - startX) * moveProgress;
                 width = initialTargetWidth + (finalWidth - initialTargetWidth) * moveProgress;
                 height = initialTargetHeight + (finalHeight - initialTargetHeight) * moveProgress;
@@ -114,7 +114,7 @@ function logoUpdate() {
 
                 if (!showText) {
                     showText = true;
-                    textShownTime = Date.now(); 
+                    textShownTime = Date.now();
                 }
             }
         }
@@ -144,8 +144,6 @@ function logoUpdate() {
 }
 
 
-
-
 function introUpdate() {
     const introFrames = [];
     const frameCount = 100;
@@ -157,7 +155,7 @@ function introUpdate() {
     let fadeAlpha = 128;
     const fadeSpeed = 3;
 
-    let fadeCompletedTime = null; 
+    let fadeCompletedTime = null;
 
     for (let i = 1; i <= frameCount; i++) {
         const frame = new ImageManager(`source/assets/scenes/mdhr_logo/${i}.png`);
@@ -183,10 +181,10 @@ function introUpdate() {
             }
 
             introFrames[currentFrame].draw(0, 0);
-     
-            
 
-          
+
+
+
         } else {
             const lastFrame = introFrames[frameCount - 1];
             lastFrame.color = Color.new(128, 128, 128, fadeAlpha);
@@ -200,11 +198,11 @@ function introUpdate() {
                     fadeCompletedTime = now;
                 } else if (now - fadeCompletedTime >= 500) {
                     SceneManager.load(titleUpdate);
-                    
+
                 }
             }
         }
-        
+
     });
 }
 
@@ -283,7 +281,7 @@ function titleUpdate() {
             irisFrames[index].draw(0, 0);
         }
 
-        
+
 
         if (fadeAlpha > 0) {
             Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, fadeAlpha));
@@ -300,7 +298,7 @@ function menuUpdate() {
 
     let fadeAlpha = 255;
     const fadeSpeed = 5;
-    let selectedIndex = 0; 
+    let selectedIndex = 0;
 
     bangersfont.scale = 0.9;
 
@@ -333,13 +331,13 @@ function menuUpdate() {
 
         if (pad.justPressed(Pads.CROSS)) {
             if (selectedIndex === 0) {
-          
+
             } else {
 
             }
         }
 
-  
+
     });
 }
 
@@ -434,7 +432,7 @@ to find the Elder Kettle. He'll know what to do!"`
         let completed = false;
 
         renderScreen(() => {
-            if (completed) return; 
+            if (completed) return;
 
             const now = Date.now();
             pad.update();
@@ -466,7 +464,7 @@ to find the Elder Kettle. He'll know what to do!"`
                 lastUpdate = now;
             }
 
-        
+
         });
     };
 
@@ -481,7 +479,7 @@ to find the Elder Kettle. He'll know what to do!"`
 
     const nextPage = () => {
         if (currentPage >= storyPages.length) {
-            SceneManager.load(titleUpdate); 
+            SceneManager.load(titleUpdate);
             return;
         }
 
@@ -500,16 +498,16 @@ function elderkettleUpdate() {
     const overlay = new Image("source/assets/scenes/elder_kettle/overlay.png");
 
     let camera = new Entity(0, 0, 640, 448, 0);
-    let player1 = new StandingPlayer(0, 270, 50, 70, 0);
+    let player1 = new Player(0, 270, 50, 70, 0);
 
     background.width = 680;
     overlay.width = 680;
 
     let currentOffset = 0;
     let cutsceneActive = true;
- 
+
     renderScreen(() => {
-        let targetOffset = (player1.entity.x / (640 - player1.entity.w)) * (680 - 640);
+        let targetOffset = (player1.x / (640 - player1.w)) * (680 - 640);
         const smoothFactor = 0.05;
         currentOffset += (targetOffset - currentOffset) * smoothFactor;
 
@@ -518,34 +516,34 @@ function elderkettleUpdate() {
         elderKettle.draw(-currentOffset + 500, 217);
 
         if (cutsceneActive) {
-            if (player1.entity.x < 350) {
-                player1.entity.x += 2;
-                player1.run()
+            if (player1.x < 350) {
+                player1.x += 2;
+                // player1.run()
             } else {
-                player1.idle();
+                // player1.idle();
                 cutsceneActive = false;
             }
         }
-        
 
-        player1.update(250, camera); 
-        player1.draw(camera);        
+
+        player1.update(250, camera);
+        player1.draw(camera);
         overlay.draw(-currentOffset, 0);
-      
-        
+
+
     });
 }
 
 function renderScreen(callback) {
     Screen.display(() => {
-        callback();  
+        callback();
         if (isDebugEnabled) {
-            DebugMemory(); 
-        }      
+            DebugMemory();
+        }
         drawScreenFX()
     });
 }
 
 
-SceneManager.load(logoUpdate)
+SceneManager.load(elderkettleUpdate)
 

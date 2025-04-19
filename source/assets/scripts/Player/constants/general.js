@@ -1,0 +1,10 @@
+export const RUN_SPEED = 4;
+export const DASH_SPEED = 11;
+export const SHOOT_DELAY = 125;
+export const SHOOT_SPEED = 20;
+export const DUST_EFFECT_SPEED = 0.5;
+export const HALF_ANALOGIC = 64;
+export const DASH_DURATION = 350;
+export const DASH_RELOAD_DURATION = 500;
+export const DASH_TURN_DURATION = 75; // ms
+export const DUST_EFFECT_INTERVAL = 250; // ms
