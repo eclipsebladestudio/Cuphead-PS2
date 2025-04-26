@@ -5,13 +5,49 @@ import { Entity } from "./source/assets/scripts/entity.js"
 import Player from "./source/assets/scripts/Player/index.js"
 import { Health } from "./source/assets/scripts/health.js"
 import { ElderKettle } from './source/assets/scenes/elder_kettle/elder.js';
-import { getConfig } from "./source/assets/scripts/config.js";
+import { getConfig, setConfig } from "source/assets/scripts/config.js";
+import { loadCupLanguage, setLanguage, getText } from "./source/assets/scripts/cupreader.js";
 
+
+loadCupLanguage()
 std.loadScript("source/assets/scripts/utils.js")
 
-let isDebugEnabled = false;
+let DisableScreenFX = false;
+let brightness = getConfig("Video", "brightness", 0.3); 
+
+const screenWidth = 640; 
+
+let languageKeys = [];
+let languageLabels = [];
+
+function loadLanguagesFromFile() {
+    languageKeys = [];
+    languageLabels = [];
+
+    let file;
+    try {
+        file = std.open("source/assets/texts/language.cfg", "r");
+    } catch (err) {
+        console.log("Erro ao abrir language.cfg:", err);
+        return;
+    }
+
+    while (!file.eof()) {
+        let line = file.getline()?.trim();
+        if (!line || line.startsWith("#")) continue;
+
+        let [key, value] = line.split("=", 2).map(s => s.trim());
+        if (key && value) {
+            languageKeys.push(key.toLowerCase());
+            languageLabels.push(value);
+        }
+    }
+
+    file.close();
+}
 
 function logoUpdate() {
+    const eclipseSound = Sound.load("source/assets/sounds/eclipsesound.wav")
     const logo = new ImageManager("source/assets/logo/eclipse.png");
     const eclipsetext = new ImageManager("source/assets/logo/eclipsetext.png");
 
@@ -61,6 +97,7 @@ function logoUpdate() {
         }
     };
 
+    Sound.play(eclipseSound)
     Screen.display(() => {
         Screen.clear();
 
@@ -135,7 +172,9 @@ function logoUpdate() {
                     fadeOutAlpha += fadeOutSpeed;
                     if (fadeOutAlpha > 255) fadeOutAlpha = 255;
                     if (fadeOutAlpha >= 255) {
+                       
                         SceneManager.load(introUpdate)
+                        
                     }
                 }
                 Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, fadeOutAlpha));
@@ -144,19 +183,24 @@ function logoUpdate() {
     });
 }
 
-
 function introUpdate() {
+
     const introFrames = [];
     const frameCount = 100;
-    const frameSpeed = 33.3;
+    const frameSpeed = 20.3;
     let currentFrame = 0;
     let lastUpdate = Date.now();
+    let animationStartTime = null;
 
     let fadingOut = false;
     let fadeAlpha = 128;
     const fadeSpeed = 3;
+    let fadeIn = 255;
+    const fadeInSpeed = 3;
 
     let fadeCompletedTime = null;
+
+    const introsound = Sound.load("source/assets/sounds/logo.wav");
 
     for (let i = 1; i <= frameCount; i++) {
         const frame = new ImageManager(`source/assets/scenes/mdhr_logo/${i}.png`);
@@ -166,27 +210,38 @@ function introUpdate() {
         introFrames.push(frame);
     }
 
+    Sound.play(introsound);
+
     renderScreen(() => {
+        
         const now = Date.now();
 
+  
+        if (animationStartTime === null) {
+            animationStartTime = now;
+        }
+
         if (!fadingOut) {
-            if (now - lastUpdate >= frameSpeed) {
-                currentFrame++;
-                lastUpdate = now;
+            if (now - animationStartTime < 1300) {
+                
+                Screen.clear(Color.new(255, 66, 10))
+            } else {
+            
+                if (now - lastUpdate >= frameSpeed) {
+                    currentFrame++;
+                    lastUpdate = now;
+                }
+
+                if (currentFrame >= frameCount - 1) {
+                    currentFrame = frameCount - 1;
+                    fadingOut = true;
+                    fadeAlpha = 128;
+                }
+
+                introFrames[currentFrame].draw(0, 0);
             }
-
-            if (currentFrame >= frameCount - 1) {
-                currentFrame = frameCount - 1;
-                fadingOut = true;
-                fadeAlpha = 128;
-            }
-
-            introFrames[currentFrame].draw(0, 0);
-
-
-
-
         } else {
+            
             const lastFrame = introFrames[frameCount - 1];
             lastFrame.color = Color.new(128, 128, 128, fadeAlpha);
             lastFrame.draw(0, 0);
@@ -197,20 +252,31 @@ function introUpdate() {
             } else {
                 if (fadeCompletedTime === null) {
                     fadeCompletedTime = now;
+                    DisableScreenFX = true;
                 } else if (now - fadeCompletedTime >= 500) {
+                 
                     SceneManager.load(titleUpdate);
-
+                    DisableScreenFX = false;
+                   
                 }
             }
         }
 
+
+        if (fadeIn > 0) {
+            Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, fadeIn));
+            fadeIn -= fadeInSpeed;
+            if (fadeIn < 0) fadeIn = 0;
+        }
     });
 }
 
 function titleUpdate() {
 
+    const titlemusic = Sound.load("source/assets/sounds/screen.wav")
+
     const irisFrames = [];
-    for (let i = 16; i >= 1; i--) {
+    for (let i = 17; i >= 2; i--) {
         const img = new ImageManager(`source/assets/scenes/iris_transitions/${i}.png`);
         img.width = 640;
         img.height = 448;
@@ -218,6 +284,7 @@ function titleUpdate() {
     }
 
     const title_background = new ImageManager("source/assets/scenes/title_screen/bg.png");
+
 
     const frameCount = 34;
     const frameSpeed = 33.3;
@@ -239,8 +306,13 @@ function titleUpdate() {
     cupheadvogue_bold.color = Color.new(255, 255, 0, 255);
     cupheadvogue_bold.outline = 1.0;
     cupheadvogue_bold.outline_color = Color.new(0, 0, 0, 255);
+    let transitionCompleted = false;
+    let lastFrameStartedAt = null;
+
+    Sound.play(titlemusic)
 
     renderScreen(() => {
+        
         pad.update();
 
         title_background.draw(0, 0);
@@ -255,12 +327,20 @@ function titleUpdate() {
 
         const img = sequence[currentFrame - 1];
 
-        drawImageWithChromatic(img, 46, 67);
+        img.draw(46, 67);
+
 
         const blink = Math.floor(now / 700) % 2 === 0;
+        let press_any_button = getText("press_any_button");
+
         if (blink) {
-            cupheadvogue_bold.print(220, 400, "Press Any Button");
+            let size = cupheadvogue_bold.getTextSize(press_any_button.value);
+            let centerX = 640 / 2; 
+            let x = centerX - size.width / 2;
+            cupheadvogue_bold.print(x, press_any_button.y, press_any_button.value);
         }
+        
+        
 
         if (pad.btns && Pads.CROSS) {
             isTransitioning = true;
@@ -275,15 +355,15 @@ function titleUpdate() {
                     lastTransitionUpdate = now;
                 }
             } else {
-                SceneManager.load(menuUpdate);
+               
+                Screen.clear(); 
+                SceneManager.load(menuUpdate); 
             }
 
             const index = Math.min(transitionFrame, irisFrames.length - 1);
             irisFrames[index].draw(0, 0);
         }
 
-
-
         if (fadeAlpha > 0) {
             Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, fadeAlpha));
             fadeAlpha -= fadeSpeed;
@@ -293,54 +373,544 @@ function titleUpdate() {
     });
 }
 
+function updateVolumeINI(index, value) {
+    const keys = ["master", "sfx", "music"];
+    const key = keys[index];
+    setConfig("Audio", key, value);
+}
+
+function initMenuAssets() {
+    const menu_background = new ImageManager("source/assets/scenes/menu/bg.png");
+    const interfacebg = new ImageManager("source/assets/scenes/menu/interface.png");
+    const pausebg = new ImageManager("source/assets/scenes/menu/pause.png");
+    const optionsbg = new ImageManager("source/assets/scenes/menu/options.png");
+    const controlsbg = new ImageManager("source/assets/scenes/menu/controlsmenu.png");
+
+    const select1 = new ImageManager("source/assets/scenes/menu/select1.png");
+    const select2 = new ImageManager("source/assets/scenes/menu/select2.png");
+    const headcup = new ImageManager("source/assets/scenes/menu/frame_headcup.png");
+    const headmugman = new ImageManager("source/assets/scenes/menu/frame_headmugman.png");
+    const headcupselected = new ImageManager("source/assets/scenes/menu/frame_headcup_selected.png");
+    const headmugmanselected = new ImageManager("source/assets/scenes/menu/frame_headmugman_selected.png");
+
+    interfacebg.width = 328;
+    interfacebg.height = 322;
+    bangersfont.scale = 0.9;
+
+    return {
+        menu_background, interfacebg, pausebg, optionsbg, controlsbg,
+        select1, select2, headcup, headmugman, headcupselected, headmugmanselected
+    };
+}
+
+function createMenuState() {
+    return {
+        inStartScene: false,
+        selectedIndex: 0,
+        slotIndex: 0,
+        fadeAlpha: 255,
+        slotConfirmed: false,
+        confirmedSlotIndex: -1,
+        characterIndex: 0,
+        inOptionsMenu: false,
+        optionsIndex: 0,
+        inControlsMenu: false,
+        inLanguageMenu: false,
+        inVisualMenu: false,
+        inAudioMenu: false,
+        languageMenuIndex: 0,
+        currentLanguageIndex: 0,
+        visualIndex: 0,
+        audioIndex: 0,
+        optionsList: [
+            getText("audio").value,
+            getText("visual").value, 
+            getText("controls").value,
+            getText("language").value,
+            getText("back").value
+        ],
+        fadeSpeed: 5,
+        vsync: true,
+        aspectIndex: 0,
+        aspectRatios: ["4:3"],
+        resolutionIndex: 0,
+        resolutions: ["NTSC(480i)"],
+        noiseEffect: true,
+        debugMode: false,
+        masterVolume: parseInt(getConfig("Audio", "master")) || 5,
+        sfxVolume: parseInt(getConfig("Audio", "sfx")) || 5,
+        musicVolume: parseInt(getConfig("Audio", "music")) || 5
+    };
+}
+
+function handleMainMenu(state, assets, pad) {
+    if (pad.justPressed(Pads.UP)) {
+        state.selectedIndex = (state.selectedIndex - 1 + 2) % 2;
+    }
+    if (pad.justPressed(Pads.DOWN)) {
+        state.selectedIndex = (state.selectedIndex + 1) % 2;
+    }
+
+    let startText = getText("start");
+    let optionsText = getText("options");
+    
+    let startSize = bangersfont.getTextSize(startText.value);
+    let optionsSize = bangersfont.getTextSize(optionsText.value);
+    
+    let startX = screenWidth / 2 - startSize.width / 2;
+    let optionsX = screenWidth / 2 - optionsSize.width / 2;
+    
+    if (state.selectedIndex === 0) {
+        printWithChromatic(bangersfont, startX, 170, startText.value, Color.new(255, 255, 255, 255), true);
+        printWithChromatic(bangersfont, optionsX, 195, optionsText.value, Color.new(80, 80, 80, 128), true);
+    } else {
+        printWithChromatic(bangersfont, startX, 170, startText.value, Color.new(80, 80, 80, 128), true);
+        printWithChromatic(bangersfont, optionsX, 195, optionsText.value, Color.new(255, 255, 255, 255), true);
+    }
+
+    if (pad.justPressed(Pads.CROSS)) {
+        if (state.selectedIndex === 0) {
+            state.inStartScene = true;
+            state.slotIndex = 0;
+            state.slotConfirmed = false;
+            state.confirmedSlotIndex = -1;
+            state.characterIndex = 0;
+        } else if (state.selectedIndex === 1) {
+            state.inOptionsMenu = true;
+            state.optionsIndex = 0;
+        }
+    }
+}
+
+function handleSlotSelection(state, assets, pad) {
+    assets.interfacebg.draw(156, 58);
+
+    if (!state.slotConfirmed) {
+        if (pad.justPressed(Pads.UP)) {
+            state.slotIndex = (state.slotIndex - 1 + 3) % 3;
+        }
+        if (pad.justPressed(Pads.DOWN)) {
+            state.slotIndex = (state.slotIndex + 1) % 3;
+        }
+    }
+
+    const slotPositions = [75, 74 + 85, 74 + 168];
+    const newTextPositions = [100, 90 + 90, 99 + 170];
+
+    if (!state.slotConfirmed) {
+        assets.select1.draw(166, slotPositions[state.slotIndex]);
+    }
+
+    for (let i = 0; i < 3; i++) {
+        if (i !== state.confirmedSlotIndex) {
+            bangers.color = (i === state.slotIndex && !state.slotConfirmed)
+                ? Color.new(255, 255, 255)
+                : Color.new(0, 0, 0);
+            bangers.print(300, newTextPositions[i], "NEW");
+        }
+    }
+
+    if (pad.justPressed(Pads.CROSS) && !state.slotConfirmed) {
+        state.slotConfirmed = true;
+        state.confirmedSlotIndex = state.slotIndex;
+    }
+
+    if (state.slotConfirmed) {
+        handleCharacterSelection(state, assets, pad, slotPositions);
+    } else if (pad.justPressed(Pads.TRIANGLE)) {
+        state.inStartScene = false;
+    }
+}
+
+function handleCharacterSelection(state, assets, pad, slotPositions) {
+    Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, 70));
+
+    if (pad.justPressed(Pads.LEFT)) {
+        state.characterIndex = (state.characterIndex - 1 + 2) % 2;
+    }
+    if (pad.justPressed(Pads.RIGHT)) {
+        state.characterIndex = (state.characterIndex + 1) % 2;
+    }
+
+    const headY = slotPositions[state.confirmedSlotIndex];
+    const headCupX = 320;
+    const headMugX = 400;
+
+    if (state.characterIndex === 0) {
+        assets.select1.draw(166, slotPositions[state.confirmedSlotIndex]);
+        assets.headcupselected.draw(headCupX, headY);
+        assets.headmugman.draw(headMugX, headY);
+    } else {
+        assets.select2.draw(166, slotPositions[state.confirmedSlotIndex]);
+        assets.headcup.draw(headCupX, headY);
+        assets.headmugmanselected.draw(headMugX, headY);
+    }
+
+    const textY = headY + 20;
+
+    bangersfont2.color = Color.new(255, 255, 255);
+    bangersfont2.scale = 0.6;
+    bangersfont2.print(220 - 45, textY, "PLEASE SELECT A");
+    bangersfont2.print(245 - 45, textY + 20, "PLAYER");
+
+    if (pad.justPressed(Pads.TRIANGLE)) {
+        state.slotConfirmed = false;
+        state.confirmedSlotIndex = -1;
+        state.characterIndex = 0;
+    }
+}
+
+function handleOptionsMenu(state, assets, pad) {
+    Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, 50));
+    assets.pausebg.draw(150, 125);
+
+    if (pad.justPressed(Pads.UP)) {
+        state.optionsIndex = (state.optionsIndex - 1 + state.optionsList.length) % state.optionsList.length;
+    }
+    if (pad.justPressed(Pads.DOWN)) {
+        state.optionsIndex = (state.optionsIndex + 1) % state.optionsList.length;
+    }
+
+    const screenWidth = Screen.getMode().width;
+
+    let itemPositions = [];
+    for (let i = 0; i < state.optionsList.length; i++) {
+        let text = state.optionsList[i];
+        let size = bangersfont.getTextSize(text);
+        let x = screenWidth / 2 - size.width / 2;
+        let y = 150 + i * 26;
+        itemPositions.push({x: x, y: y});
+    }
+    
+
+    for (let i = 0; i < state.optionsList.length; i++) {
+        const pos = itemPositions[i];
+        const color = (i === state.optionsIndex)
+            ? Color.new(255, 0, 0)
+            : Color.new(20, 20, 20);
+    
+        printWithChromatic(bangersfont, pos.x, pos.y, state.optionsList[i], color, true);
+    }
+
+    if (pad.justPressed(Pads.CROSS)) {
+        const selectedOption = state.optionsList[state.optionsIndex];
+        if (selectedOption === "BACK") {
+            state.inOptionsMenu = false;
+        } else if (selectedOption === "LANGUAGE") {
+            state.inLanguageMenu = true;
+            state.inOptionsMenu = false;
+            state.languageMenuIndex = 0;
+        } else if (selectedOption === "AUDIO") {
+            state.inAudioMenu = true;
+            state.inOptionsMenu = false;
+            state.audioIndex = 0;
+        } else if (selectedOption === "VISUAL") {
+            state.inVisualMenu = true;
+            state.inOptionsMenu = false;
+            state.visualIndex = 0;
+        } else if (selectedOption === "CONTROLS") {
+            state.inOptionsMenu = false;
+            state.inControlsMenu = true;
+        }
+    }
+}
+
+function handleLanguageMenu(state, assets, pad) {
+
+    if (!languageKeys.length) {
+        loadLanguagesFromFile();
+        state.currentLanguageIndex = languageKeys.indexOf(getConfig("Language", "language", "english"));
+        if (state.currentLanguageIndex === -1) state.currentLanguageIndex = 0;
+    }
+    
+
+    Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, 50));
+    assets.pausebg.draw(150, 125);
+    
+    if (pad.justPressed(Pads.UP) || pad.justPressed(Pads.DOWN)) {
+        state.languageMenuIndex = (state.languageMenuIndex + 1) % 2;
+    }
+    
+    if (state.languageMenuIndex === 0) {
+        if (pad.justPressed(Pads.LEFT)) {
+            state.currentLanguageIndex = (state.currentLanguageIndex - 1 + languageKeys.length) % languageKeys.length;
+            setLanguage(languageKeys[state.currentLanguageIndex]);
+        }
+        if (pad.justPressed(Pads.RIGHT)) {
+            state.currentLanguageIndex = (state.currentLanguageIndex + 1) % languageKeys.length;
+            setLanguage(languageKeys[state.currentLanguageIndex]);
+        }
+    }
+    
+    const languageText = languageLabels[state.currentLanguageIndex];
+    const langColor = (state.languageMenuIndex === 0)
+        ? Color.new(255, 0, 0)
+        : Color.new(20, 20, 20);
+    
+
+    let langSize = bangersfont.getTextSize(languageText);
+    let centerX = 640 / 2;
+    let langX = centerX - langSize.width / 2;
+    
+    printWithChromatic(bangersfont, langX, 190, languageText, langColor, true);
+    
+    const backText = "BACK";
+    const backColor = (state.languageMenuIndex === 1)
+        ? Color.new(255, 0, 0)
+        : Color.new(20, 20, 20);
+    
+    let backSize = bangersfont.getTextSize(backText);
+    let backX = centerX - backSize.width / 2;
+    
+    printWithChromatic(bangersfont, backX, 250, backText, backColor, true);
+    
+    bangersfont2.scale = 0.6;
+    bangersfont2.color = Color.new(60, 60, 60);
+    
+    const labelText = "LANGUAGE:";
+    let labelSize = bangersfont2.getTextSize(labelText);
+    let labelX = centerX - labelSize.width / 2;
+    
+    bangersfont2.print(labelX, 170, labelText);
+    
+    if (pad.justPressed(Pads.CROSS) && state.languageMenuIndex === 1) {
+        state.inLanguageMenu = false;
+        state.inOptionsMenu = true;
+    }
+}
+
+function handleControlsMenu(state, assets, pad) {
+    Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, 50));
+    assets.controlsbg.draw(20, 20);
+    
+    if (pad.justPressed(Pads.TRIANGLE)) {
+        state.inControlsMenu = false;
+        state.inOptionsMenu = true;
+    }
+}
+function handleAudioMenu(state, assets, pad) {
+    Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, 50));
+    assets.optionsbg.draw(169, 92);
+    
+    const audioOptions = ["MASTER VOLUME", "SFX VOLUME", "MUSIC VOLUME", "BACK"];
+    const optionPositions = [
+        { x: 190, y: 150 - 30 },
+        { x: 245, y: 175 - 30 },
+        { x: 210, y: 200 - 30 },
+        { x: 287, y: 270 - 30 }
+    ];
+
+    let volumes = [state.masterVolume, state.sfxVolume, state.musicVolume];
+
+    if (pad.justPressed(Pads.UP)) {
+        state.audioIndex = (state.audioIndex - 1 + audioOptions.length) % audioOptions.length;
+    }
+    if (pad.justPressed(Pads.DOWN)) {
+        state.audioIndex = (state.audioIndex + 1) % audioOptions.length;
+    }
+
+    if (pad.justPressed(Pads.RIGHT) && state.audioIndex < 3) {
+        if (volumes[state.audioIndex] < 10) {
+            volumes[state.audioIndex]++;
+            updateVolumeINI(state.audioIndex, volumes[state.audioIndex]);
+        }
+    }
+    if (pad.justPressed(Pads.LEFT) && state.audioIndex < 3) {
+        if (volumes[state.audioIndex] > 0) {
+            volumes[state.audioIndex]--;
+            updateVolumeINI(state.audioIndex, volumes[state.audioIndex]);
+        }
+    }
+
+    [state.masterVolume, state.sfxVolume, state.musicVolume] = volumes;
+
+    for (let i = 0; i < audioOptions.length; i++) {
+        const pos = optionPositions[i];
+        const textColor = (i === 3 && i === state.audioIndex)
+            ? Color.new(255, 0, 0)
+            : Color.new(20, 20, 20);
+
+        printWithChromatic(
+            bangersfont,
+            pos.x,
+            pos.y,
+            audioOptions[i] + (i < 3 ? ":" : ""),
+            textColor,
+            true
+        );
+
+        if (i < 3) {
+            const level = volumes[i];
+            let bar = "";
+            
+            for (let j = 0; j < 10; j++) {
+                bar += (j === level - 1 ? "|" : "-");
+            }
+
+            const barColor = (i === state.audioIndex) ? Color.new(255, 0, 0) : Color.new(0, 0, 0);
+
+            bangersfont2.scale = 0.7;
+            bangersfont2.color = barColor;
+            bangersfont2.print(395, 123 + i * 25, bar);
+        }
+    }
+
+    if (pad.justPressed(Pads.CROSS) && state.audioIndex === 3) {
+        state.inAudioMenu = false;
+        state.inOptionsMenu = true;
+    }
+}
+function handleVisualMenu(state, assets, pad) {
+    Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, 50));
+    assets.optionsbg.draw(169, 92);
+    
+    const visualOptions = [
+        "RESOLUTION",
+        "ASPECT RATIO",
+        "BRIGHTNESS",
+        "VSYNC",
+        "NOISE EFFECT",
+        "DEBUG",
+        "BACK"
+    ];
+
+    const startY = 110;
+    const spacing = 22;
+
+    const optionPositions = visualOptions.map((_, i) => {
+        if (i === 6) return { x: 305, y: startY + spacing * i }; 
+        return { x: 190, y: startY + spacing * i };
+    });
+
+    if (pad.justPressed(Pads.UP)) {
+        state.visualIndex = (state.visualIndex - 1 + visualOptions.length) % visualOptions.length;
+    }
+    if (pad.justPressed(Pads.DOWN)) {
+        state.visualIndex = (state.visualIndex + 1) % visualOptions.length;
+    }
+
+    if (pad.justPressed(Pads.LEFT)) {
+        handleVisualMenuLeftInput(state);
+    }
+
+    if (pad.justPressed(Pads.RIGHT)) {
+        handleVisualMenuRightInput(state);
+    }
+
+    for (let i = 0; i < visualOptions.length; i++) {
+        const pos = optionPositions[i];
+        const label = visualOptions[i];
+        let color = (i === state.visualIndex) ? Color.new(255, 0, 0) : Color.new(20, 20, 20);
+        let value = getVisualOptionValue(state, i);
+
+        if (i === 6) {
+            printWithChromatic(bangersfont, pos.x, pos.y, label, color, true, 0.7);
+        } else {
+            printWithChromatic(bangersfont, pos.x, pos.y, `${label}: ${value}`, color, true, 0.7);
+        }
+    }
+
+    if (pad.justPressed(Pads.CROSS) && state.visualIndex === 6) {
+        state.inVisualMenu = false;
+        state.inOptionsMenu = true;
+    }
+}
+function handleVisualMenuLeftInput(state) {
+    switch (state.visualIndex) {
+        case 0:
+            state.resolutionIndex = (state.resolutionIndex - 1 + state.resolutions.length) % state.resolutions.length;
+            break;
+        case 1:
+            state.aspectIndex = (state.aspectIndex - 1 + state.aspectRatios.length) % state.aspectRatios.length;
+            break;
+        case 2:
+            adjustBrightness(false); 
+            break;
+        case 3:
+            state.vsync = !state.vsync;
+            setConfig("Video", "vsync", state.vsync);
+            break;
+        case 4:
+            state.noiseEffect = !state.noiseEffect;
+            setConfig("VisualEffects", "screenfx", state.noiseEffect);
+            break;
+        case 5:
+            state.debugMode = !state.debugMode;
+            setConfig("Debug", "enabled", state.debugMode);
+            break;
+    }
+}
+function handleVisualMenuRightInput(state) {
+    switch (state.visualIndex) {
+        case 0:
+            state.resolutionIndex = (state.resolutionIndex + 1) % state.resolutions.length;
+            break;
+        case 1:
+            state.aspectIndex = (state.aspectIndex + 1) % state.aspectRatios.length;
+            break;
+        case 2:
+            adjustBrightness(true); 
+            break;
+        case 3:
+            state.vsync = !state.vsync;
+            setConfig("Video", "vsync", state.vsync);
+            break;
+        case 4:
+            state.noiseEffect = !state.noiseEffect;
+            setConfig("VisualEffects", "screenfx", state.noiseEffect);
+            break;
+        case 5:
+            state.debugMode = !state.debugMode;
+            setConfig("Debug", "enabled", state.debugMode);
+            break;
+    }
+}
+function getVisualOptionValue(state, optionIndex) {
+    switch (optionIndex) {
+        case 0: return state.resolutions[state.resolutionIndex];
+        case 1: return state.aspectRatios[state.aspectIndex];
+        case 2: return `${Math.round((1 - brightness) * 100)}%`;
+        case 3: return state.vsync ? "ON" : "OFF";
+        case 4: return state.noiseEffect ? "ON" : "OFF";
+        case 5: return state.debugMode ? "ON" : "OFF";
+        default: return "";
+    }
+}
 function menuUpdate() {
     const pad = Pads.get(0);
-    const menu_background = new ImageManager("source/assets/scenes/menu/bg.png");
-
-    let fadeAlpha = 255;
-    const fadeSpeed = 5;
-    let selectedIndex = 0;
-
-    bangersfont.scale = 0.9;
+    const assets = initMenuAssets();
+    const state = createMenuState();
 
     renderScreen(() => {
         pad.update();
-        menu_background.draw(0, 0);
-
-
-        if (pad.justPressed(Pads.UP)) {
-            selectedIndex = (selectedIndex - 1 + 2) % 2;
-        }
-        if (pad.justPressed(Pads.DOWN)) {
-            selectedIndex = (selectedIndex + 1) % 2;
-        }
-
-        if (selectedIndex === 0) {
-            printWithChromatic(bangersfont, 295, 170, "START", Color.new(255, 255, 255, 255), true);
-            printWithChromatic(bangersfont, 280, 195, "OPTIONS", Color.new(80, 80, 80, 128), true);
+        assets.menu_background.draw(0, 0);
+        
+        if (state.inOptionsMenu) {
+            handleOptionsMenu(state, assets, pad);
+        } else if (state.inLanguageMenu) {
+            handleLanguageMenu(state, assets, pad);
+        } else if (state.inControlsMenu) {
+            handleControlsMenu(state, assets, pad);
+        } else if (state.inAudioMenu) {
+            handleAudioMenu(state, assets, pad);
+        } else if (state.inVisualMenu) {
+            handleVisualMenu(state, assets, pad);
+        } else if (!state.inStartScene) {
+            handleMainMenu(state, assets, pad);
         } else {
-            printWithChromatic(bangersfont, 295, 170, "START", Color.new(80, 80, 80, 128), true);
-            printWithChromatic(bangersfont, 280, 195, "OPTIONS", Color.new(255, 255, 255, 255), true);
+            handleSlotSelection(state, assets, pad);
         }
-
-        if (fadeAlpha > 0) {
-            Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, fadeAlpha));
-            fadeAlpha -= fadeSpeed;
-            if (fadeAlpha < 0) fadeAlpha = 0;
-        }
-
-
-        if (pad.justPressed(Pads.CROSS)) {
-            if (selectedIndex === 0) {
-
-            } else {
-
-            }
-        }
-
-
     });
 }
+function adjustBrightness(up) {
+    if (up) {
+        brightness = Math.min(brightness + 0.1, 1); 
+    } else {
+        brightness = Math.max(brightness - 0.1, 0);
+    }
+    setConfig("Video", "brightness", brightness); 
+}
+
 
 function storybookUpdate() {
     const storyPages = [
@@ -519,9 +1089,9 @@ function elderkettleUpdate() {
         if (cutsceneActive) {
             if (player1.x < 350) {
                 player1.x += 2;
-                // player1.run()
+         
             } else {
-                // player1.idle();
+            
                 cutsceneActive = false;
             }
         }
@@ -535,20 +1105,31 @@ function elderkettleUpdate() {
     });
 }
 
+
+
 function renderScreen(callback) {
+    
     Screen.display(() => {
+  
+        let alphaBrightness = brightness * 255; 
+
         callback();
+     
         if (getConfig("Debug", "enabled", false)) {
             DebugMemory();
         }
 
-        if (getConfig("VisualEffects", "screenfx", false)) {
+        
+
+        if (getConfig("VisualEffects", "screenfx", false) && !DisableScreenFX) {
             drawScreenFX();
         }
+
+        Draw.rect(0, 0, 640, 448, Color.new(0, 0, 0, alphaBrightness));
 
     });
 }
 
 
-SceneManager.load(elderkettleUpdate)
 
+SceneManager.load(logoUpdate);

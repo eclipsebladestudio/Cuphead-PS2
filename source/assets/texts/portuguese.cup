@@ -1,0 +1,24 @@
+::press_any_button
+y: 400
+text: Pressione qualquer botão
+
+::start
+text: INICIAR
+
+::options
+text: OPÇÕES
+
+::audio
+text: AUDIO
+
+::visual
+text: VIDEO
+
+::controls
+text: CONTROLES
+
+::language
+text: LINGUAGEM
+
+::back
+text: VOLTAR

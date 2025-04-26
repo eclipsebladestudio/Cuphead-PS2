@@ -1,21 +1,14 @@
-const cupheadvogue_bold = new Font("source/assets/fonts/CupheadVogue-Bold.otf");
+const cupheadvogue_bold = new Font("source/assets/fonts/CupheadVogue-Bold-merged.ttf");
 const pad = Pads.get(0);
-const bangersfont = new Font("source/assets/fonts/CupheadVogue-ExtraBold.otf")
-
-function renderScreen(callback) {
-    Screen.display(() => {
-        callback();  
-        if (isDebugEnabled) {
-            DebugMemory(); 
-        }      
-        drawScreenFX();     
-    });
-}
+const bangersfont = new Font("source/assets/fonts/CupheadVogue-ExtraBold-merged.ttf")
+const bangersfont2 = new Font("source/assets/fonts/CupheadVogue-ExtraBold-merged.ttf")
+const bangers = new Font("source/assets/fonts/Bangers.ttf")
 
 
 function DebugMemory() {
     const ramStats = System.getMemoryStats();
-    const freeVRAM = Screen.getFreeVRAM();
+    const freeVRAM = Screen.getFreeVRAM()
+
     const ramUsedMB = (ramStats.used / 1048576).toFixed(2);
     const ramFreeMB = (32 - ramUsedMB).toFixed(2);
 
@@ -26,9 +19,11 @@ function DebugMemory() {
 }
 
 
-function printWithChromatic(font, x, y, text, color, chromaticAberration) {
+function printWithChromatic(font, x, y, text, color, chromaticAberration, scale = 0.8) {
+
     font.outline = 0.0;
     font.dropshadow = 0.0;
+    font.scale = scale;
 
     const mainAlpha = color.a ?? 255;
     const chromaAlpha = Math.floor((128 / 255) * mainAlpha); 
