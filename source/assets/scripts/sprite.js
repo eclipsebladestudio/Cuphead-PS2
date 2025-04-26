@@ -46,6 +46,7 @@ export class Sprite {
 
           offsetX: jumper.offsetX == undefined ? 0 : jumper.offsetX,
           offsetY: jumper.offsetY == undefined ? 0 : jumper.offsetY,
+          leftOffSetX: jumper.leftOffSetX == undefined ? 0 : jumper.leftOffSetX,
 
           imagesLength: jumper.imagesLength,
 
@@ -102,7 +103,7 @@ export class Sprite {
     this.spritesheet.endy = frame.y + frame.heightPerImage;
 
     this.spritesheet.draw(
-      (this.flipX ? this.x + frame.widthPerImage : this.x + frame.offsetX) + frame.offsetX,
+      (this.flipX ? this.x + frame.widthPerImage + (frame.leftOffSetX ? frame.leftOffSetX : 0) : this.x + frame.offsetX) + frame.offsetX,
       (this.flipY ? this.y + frame.heightPerImage : this.y + frame.offsetY) + frame.offsetY
     );
 
