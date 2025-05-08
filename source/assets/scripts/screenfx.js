@@ -7,7 +7,7 @@ for (let i = 1; i <= 22; i++) {
     const fx = new Image(`source/assets/scenes/screen_fx/${i}.png`);
     fx.width = 640;
     fx.height = 448;
-    fx.color = Color.new(255, 255, 255, 255)
+    fx.color = Color.new(255, 255, 255, 200)
     screenfxFrames.push(fx);
 }
 

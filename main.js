@@ -1,10 +1,11 @@
 import { SceneManager, ImageManager } from "./source/assets/scripts/scenemanager.js";
 import { drawScreenFX } from "./source/assets/scripts/ScreenFX.js";
+import { Timer } from "./source/assets/scripts/timer.js"
 import { Entity } from "./source/assets/scripts/entity.js"
 import Player from "./source/assets/scripts/Player/index.js"
+import { Health } from "./source/assets/scripts/health.js"
 import { ElderKettle } from './source/assets/scenes/elder_kettle/elder.js';
 import { getConfig } from "./source/assets/scripts/config.js";
-import MemoryCardManager from "./source/assets/scripts/MemoryCardManager/index.js";
 
 std.loadScript("source/assets/scripts/utils.js")
 
@@ -496,9 +497,6 @@ function elderkettleUpdate() {
     const elderKettle = new ElderKettle();
     const background = new Image("source/assets/scenes/elder_kettle/background.png");
     const overlay = new Image("source/assets/scenes/elder_kettle/overlay.png");
-    const memoryCard = new MemoryCardManager();
-
-    memoryCard.testMemoryCard();
 
     let camera = new Entity(0, 0, 640, 448, 0);
     let player1 = new Player(0, 270, 50, 70, 0);
