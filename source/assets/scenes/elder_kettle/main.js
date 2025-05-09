@@ -1,6 +1,6 @@
 import { Timer } from "../../Modules/timer.js"
 import { Entity } from "../../Modules/entity.js"
-import { StandingPlayer } from "../../Modules/player.js"
+import { Player } from "../../scripts/Player/index.js"
 import { Health } from "../../Modules/health.js";  
 import { ElderKettle } from 'src/Scenes/Elder Kettle/elder.js'; 
 
@@ -12,7 +12,7 @@ const overlay = new Image("src/Scenes/Elder Kettle/overlay.png");
 
 const elderKettle = new ElderKettle();
 let camera = new Entity(0, 100, 640, 448, 0)
-let player1 = new StandingPlayer(0, 270, 110, 150, 0)
+let player1 = new Player(0, 270, 110, 150, 0)
 
 let currentTime = 0;
 let lastFrameTime = 0;

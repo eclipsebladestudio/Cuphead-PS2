@@ -220,7 +220,7 @@ export default class PlayerMovementController {
     }
 
     handleRunShooting(player) {
-        if (!player.stateManager.isShooting) return;
+        if (!player.stateManager.isShooting || player.stateManager.isJumping) return;
         const randomX = Math.round(Math.random() * 10);
         const randomY = Math.round(Math.random() * 15);
         const direction = player.flipX ? -1 : 1;
@@ -243,6 +243,7 @@ export default class PlayerMovementController {
 
     executeIdle(player) {
         if (!player.stateManager.isShooting) return;
+
         if (player.inputHandler.isAimingUp()) {
             this.executeIdleUpShot(player);
             return;
@@ -254,6 +255,7 @@ export default class PlayerMovementController {
     }
 
     executeIdleUpShot(player) {
+        if(player.stateManager.isJumping) return;
         const randomX = Math.round(Math.random() * 10);
         const randomY = Math.round(Math.random() * 15);
         const bulletX = player.x + (player.flipX ? -30 : 7);
@@ -267,6 +269,7 @@ export default class PlayerMovementController {
     }
 
     shootWithEffect(player, bulletX, bulletY, direction, animation, effectOffsetX, effectOffsetY) {
+        if(player.stateManager.isJumping) return;
         const randomX = Math.round(Math.random() * 10);
         const randomY = Math.round(Math.random() * 15);
         const shot = player.weaponSystem.shootStraight(bulletX, bulletY, direction, randomX, randomY);
