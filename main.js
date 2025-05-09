@@ -6,6 +6,7 @@ import Player from "./source/assets/scripts/Player/index.js"
 import { Health } from "./source/assets/scripts/health.js"
 import { ElderKettle } from './source/assets/scenes/elder_kettle/elder.js';
 import { getConfig } from "./source/assets/scripts/config.js";
+import MemoryCardManager from "./source/assets/scripts/MemoryCardManager/index.js";
 
 std.loadScript("source/assets/scripts/utils.js")
 
@@ -548,7 +549,6 @@ function renderScreen(callback) {
 
     });
 }
-
 
 SceneManager.load(elderkettleUpdate)
 
