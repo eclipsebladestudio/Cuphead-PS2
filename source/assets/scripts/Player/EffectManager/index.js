@@ -11,7 +11,7 @@ export default class PlayerEffectsManager {
         });
     }
 
-    updateAndDraw(shouldDrawConditionalEffects = true) {
+    updateAndDraw(shouldDrawConditionalEffects = true, deltaTime) {
         this.effects.forEach(({ effect, alwaysDraw, originalActive }) => {
             if (!alwaysDraw) {
                 effect.active = originalActive;

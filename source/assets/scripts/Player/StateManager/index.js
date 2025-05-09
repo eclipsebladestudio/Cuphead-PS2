@@ -31,6 +31,7 @@ export default class PlayerStateManager {
                     this.isGrounded = false;
                     this.isDucking = false;
                     this.isRunning = false;
+                    this.isShooting = false;
                 },
                 update: () => {},
                 exit: () => {}

@@ -166,6 +166,7 @@ export default class Player extends Entity {
         this.animate(this.currentAnimation, this.fps, camera);
 
         this.weaponSystem.updateBullets(this.x, this.y, deltaTime);
-        this.effectManager.updateAndDraw(this.stateManager.isShooting, deltaTime);
+
+        this.effectManager.updateAndDraw(this.stateManager.isShooting && !this.stateManager.isJumping, deltaTime);
     }
 }
