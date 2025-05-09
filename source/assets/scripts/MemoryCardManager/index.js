@@ -1,6 +1,6 @@
 export default class MemoryCardManager {
     constructor(slot = 1, gameDir = "CUPHEAD") {
-        if(slot < 1 || slot > 2){
+        if(slot !== 1 && slot !== 2) {
             throw new Error("O Slot deve ser 1 ou 2");
         }
 
@@ -51,7 +51,7 @@ export default class MemoryCardManager {
         }
 
         for (const key in data) {
-            file.printf("%s:%s\n", key, data[key]);
+            file.printf("%s=%s\n", key, data[key]);
         }
 
         file.flush();
@@ -75,12 +75,11 @@ export default class MemoryCardManager {
         const lines = content.split("\n");
         const data = {};
 
-        console.log("LINHAS: ", lines)
-        console.log("DATA: ", content)
+        console.log("CONTENT: " + content)
 
         for (const line of lines) {
             if (line.trim() === "") continue;
-            const [key, value] = line.split(":");
+            const [key, value] = line.split("=");
             data[key] = isNaN(value) ? value : Number(value);
         }
 
