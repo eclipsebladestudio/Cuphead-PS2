@@ -40,7 +40,7 @@ export default class MemoryCardManager {
     saveGame(data, fileName = "savegame.txt") {
         if (!this.checkMemoryCard()) return false;
 
-        if (!std.exists(this.gamePath)) {
+        if (!this.checkFileExists(this.gamePath)) {
             this.createGameDirectory();
         }
 
@@ -64,7 +64,7 @@ export default class MemoryCardManager {
 
         const filePath = `${this.gamePath}${fileName}`;
 
-        if (!std.exists(filePath)) {
+        if (!this.checkFileExists(filePath)) {
             return null;
         }
 
@@ -75,8 +75,6 @@ export default class MemoryCardManager {
         const lines = content.split("\n");
         const data = {};
 
-        console.log("CONTENT: " + content)
-
         for (const line of lines) {
             if (line.trim() === "") continue;
             const [key, value] = line.split("=");
@@ -86,12 +84,16 @@ export default class MemoryCardManager {
         return data;
     }
 
+    checkFileExists(filePath = `${this.gamePath}savegame.txt`) {
+        return std.exists(filePath);
+    }
+
     deleteSave(fileName = "savegame.txt") {
         if (!this.checkMemoryCard()) return false;
 
         const filePath = `${this.gamePath}${fileName}`;
 
-        if (!std.exists(filePath)) {
+        if (!this.checkFileExists(filePath)) {
             return false;
         }
 
@@ -102,28 +104,11 @@ export default class MemoryCardManager {
     listSaves() {
         if (!this.checkMemoryCard()) return [];
 
-        if (!std.exists(this.gamePath)) {
+        if (!this.checkFileExists(this.gamePath)) {
             return [];
         }
 
         const files = System.listDir(this.gamePath);
         return files.filter(file => !file.directory).map(file => file.name);
-    }
-
-    displayInfo() {
-        this.updateStatus();
-
-        console.log("\n===== MEMORY CARD INFO =====");
-        console.log(`Slot: ${this.slot + 1}`);
-        console.log(`Presente: ${this.status.present ? 'Sim' : 'Não'}`);
-        console.log(`Formatado: ${this.status.formatted ? 'Sim' : 'Não'}`);
-        console.log(`Espaço livre: ${this.status.freeSpace} KB`);
-        console.log(`Diretório do jogo: ${this.status.dirExists ? 'Existe' : 'Não existe'}`);
-        console.log(`Caminho: ${this.gamePath}`);
-
-        if (this.status.error) {
-            console.log(`Erro: ${this.status.error}`);
-        }
-        console.log("============================\n");
     }
 }
