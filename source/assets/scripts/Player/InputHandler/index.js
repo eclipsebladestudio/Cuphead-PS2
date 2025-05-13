@@ -1,35 +1,28 @@
-
-import { getConfig } from "source/assets/scripts/config.js"; 
 import { HALF_ANALOGIC } from "../constants/general.js";
+import PlayerControls from "../PlayerControls/index.js";
 
 export default class PlayerInputHandler {
     constructor(playerId = 1) {
         this.pad = null;
-        this.config = this.loadControlConfig(playerId);
-    }
+        this.playerControls = new PlayerControls(playerId);
 
-    loadControlConfig(playerId) {
-        const section = "Gamepad";
-        const prefix = `p${playerId}_`;
-
-        const get = (key, def = null) => getConfig(section, prefix + key, def);
-
-        return {
-            btn_jump: get("btn_jump"),
-            btn_shoot: get("btn_shoot"),
-            btn_dash: get("btn_dash"),
-            btn_ex: get("btn_ex"),
-            btn_lock: get("btn_lock"),
-            btn_wpn: get("btn_wpn"),
-            btn_pause: get("btn_pause"),
-            btn_up: get("btn_up"),
-            btn_down: get("btn_down"),
-            btn_left: get("btn_left"),
-            btn_right: get("btn_right"),
-            axis_x: get("axis_x", "lx"),
-            axis_y: get("axis_y", "ly"),
-            axis_x_invert: get("axis_x_invert", false),
-            axis_y_invert: get("axis_y_invert", false),
+        this.buttonMap = {
+            "CROSS": Pads.CROSS,
+            "SQUARE": Pads.SQUARE,
+            "CIRCLE": Pads.CIRCLE,
+            "TRIANGLE": Pads.TRIANGLE,
+            "L1": Pads.L1,
+            "L2": Pads.L2,
+            "R1": Pads.R1,
+            "R2": Pads.R2,
+            "START": Pads.START,
+            "SELECT": Pads.SELECT,
+            "UP": Pads.UP,
+            "DOWN": Pads.DOWN,
+            "LEFT": Pads.LEFT,
+            "RIGHT": Pads.RIGHT,
+            "L3": Pads.L3,
+            "R3": Pads.R3
         };
     }
 
@@ -39,41 +32,82 @@ export default class PlayerInputHandler {
 
     update() {
         if (!this.pad) return;
-    
-        const axisX = this.config.axis_x || "lx";
-        const axisY = this.config.axis_y || "ly";
-    
+
+        const axisX = this.playerControls.getAxisX() || "lx";
+        const axisY = this.playerControls.getAxisY() || "ly";
+
         this.pad[axisX] = Pads.getAxis(this.pad.port, axisX);
         this.pad[axisY] = Pads.getAxis(this.pad.port, axisY);
     }
-    
 
     isButtonPressed(configKey) {
-        const btn = this.config[configKey];
-        return btn && this.pad.btns & Pads[btn];
+        let btnName;
+
+        switch(configKey) {
+            case "btn_jump":
+                btnName = this.playerControls.getJumpButton();
+                break;
+            case "btn_shoot":
+                btnName = this.playerControls.getShootButton();
+                break;
+            case "btn_dash":
+                btnName = this.playerControls.getDashButton();
+                break;
+            case "btn_ex":
+                btnName = this.playerControls.getExButton();
+                break;
+            case "btn_lock":
+                btnName = this.playerControls.getLockButton();
+                break;
+            case "btn_wpn":
+                btnName = this.playerControls.getWpnButton();
+                break;
+            case "btn_pause":
+                btnName = this.playerControls.getPauseButton();
+                break;
+            case "btn_up":
+                btnName = this.playerControls.getUpButton();
+                break;
+            case "btn_down":
+                btnName = this.playerControls.getDownButton();
+                break;
+            case "btn_left":
+                btnName = this.playerControls.getLeftButton();
+                break;
+            case "btn_right":
+                btnName = this.playerControls.getRightButton();
+                break;
+            default:
+                return false;
+        }
+
+        if (!btnName || btnName === "NaN") return false;
+
+        const buttonConstant = this.buttonMap[btnName];
+        return buttonConstant !== undefined && (this.pad.btns & buttonConstant);
     }
 
     isMovingLeft() {
-        const axis = this.config.axis_x || "lx";
-        const value = this.config.axis_x_invert ? -this.pad[axis] : this.pad[axis];
+        const axis = this.playerControls.getAxisX() || "lx";
+        const value = this.playerControls.getAxisXInvert() ? -this.pad[axis] : this.pad[axis];
         return (this.isButtonPressed("btn_left")) || (value < -HALF_ANALOGIC);
     }
 
     isMovingRight() {
-        const axis = this.config.axis_x || "lx";
-        const value = this.config.axis_x_invert ? -this.pad[axis] : this.pad[axis];
+        const axis = this.playerControls.getAxisX() || "lx";
+        const value = this.playerControls.getAxisXInvert() ? -this.pad[axis] : this.pad[axis];
         return (this.isButtonPressed("btn_right")) || (value > HALF_ANALOGIC);
     }
 
     isDucking() {
-        const axis = this.config.axis_y || "ly";
-        const value = this.config.axis_y_invert ? -this.pad[axis] : this.pad[axis];
+        const axis = this.playerControls.getAxisY() || "ly";
+        const value = this.playerControls.getAxisYInvert() ? -this.pad[axis] : this.pad[axis];
         return this.isButtonPressed("btn_down") || (value > HALF_ANALOGIC);
     }
 
     isAimingUp() {
-        const axis = this.config.axis_y || "ly";
-        const value = this.config.axis_y_invert ? -this.pad[axis] : this.pad[axis];
+        const axis = this.playerControls.getAxisY() || "ly";
+        const value = this.playerControls.getAxisYInvert() ? -this.pad[axis] : this.pad[axis];
         return this.isButtonPressed("btn_up") || (value < -HALF_ANALOGIC);
     }
 

@@ -77,10 +77,21 @@ export default class MemoryCardManager {
 
         for (const line of lines) {
             if (line.trim() === "") continue;
-            const [key, value] = line.split("=");
-            data[key] = isNaN(value) ? value : Number(value);
+            const [key, rawValue] = line.split("=");
+            const value = rawValue.trim();
+
+            if (value === "true") {
+                data[key] = true;
+            } else if (value === "false") {
+                data[key] = false;
+            } else if (!isNaN(value) && value !== "NaN") {
+                data[key] = Number(value);
+            } else {
+                data[key] = value;
+            }
         }
 
+        console.log(JSON.stringify(data));
         return data;
     }
 
