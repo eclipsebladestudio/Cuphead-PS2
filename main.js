@@ -1132,4 +1132,4 @@ function renderScreen(callback) {
 
 
 
-SceneManager.load(logoUpdate);
+SceneManager.load(elderkettleUpdate);
